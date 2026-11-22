@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The StandardOS documentation: how to use StandardOS day to day, solve a problem, and go further.">
+<meta name="color-scheme" content="light dark">
+<title>StandardOS Documentation</title>
+<style>
+:root {
+  --bg: #faf8f4; --surface: #f1eee8; --surface-2: #e7e3db; --line: #dcd7ce;
+  --text: #27251f; --muted: #5f5b54; --faint: #8a857c;
+  --accent: #c8643a; --link: #a9532c; --link-hover: #7f3d1f;
+  --accent-soft: rgba(200, 100, 58, .12);
+  --note: #2f6bc0; --tip: #3f8a45; --warn: #a87b12; --danger: #c4384a;
+  --code-bg: #efebe4; --shadow: 0 8px 28px rgba(39, 37, 31, .14);
+  --radius: 12px;
+  color-scheme: light;
+  --mono: ui-monospace, "JetBrains Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "Inter", "Cantarell", "DejaVu Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16171a; --surface: #1d2026; --surface-2: #262a31; --line: #30343c;
+    --text: #e6e3dd; --muted: #a8acb3; --faint: #7d828b;
+    --accent: #ffbe98; --link: #ffbe98; --link-hover: #ffd9c2;
+    --accent-soft: rgba(255, 190, 152, .12);
+    --note: #8ab4f0; --tip: #9fd69a; --warn: #f5cf7a; --danger: #ef7676;
+    --code-bg: #1f2228; --shadow: 0 10px 32px rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16171a; --surface: #1d2026; --surface-2: #262a31; --line: #30343c;
+  --text: #e6e3dd; --muted: #a8acb3; --faint: #7d828b;
+  --accent: #ffbe98; --link: #ffbe98; --link-hover: #ffd9c2;
+  --accent-soft: rgba(255, 190, 152, .12);
+  --note: #8ab4f0; --tip: #9fd69a; --warn: #f5cf7a; --danger: #ef7676;
+  --code-bg: #1f2228; --shadow: 0 10px 32px rgba(0, 0, 0, .45);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 76px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16.5px/1.65 var(--sans); text-rendering: optimizeLegibility;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--link-hover); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--surface); padding: 8px 12px; z-index: 50; }
+.skip:focus { left: 8px; }
+
+/* ── top bar ─────────────────────────────────────────── */
+/* on a phone with a notch, the band above the sticky header is painted, so nothing scrolls into it */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; height: 60px;
+  display: flex; align-items: center; gap: 14px; padding: 0 18px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; white-space: nowrap; }
+.brand .mark {
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--text); color: var(--bg); font-weight: 800; font-size: 15px; letter-spacing: -.5px;
+}
+.brand b { font-weight: 700; letter-spacing: -.2px; }
+.brand span.sub { color: var(--muted); font-weight: 500; }
+.parts { display: flex; gap: 4px; margin-left: 8px; }
+.parts a {
+  padding: 6px 12px; border-radius: 999px; text-decoration: none; color: var(--muted);
+  font-weight: 600; font-size: 14.5px;
+}
+.parts a:hover { color: var(--text); background: var(--surface); }
+.parts a[aria-current="true"] { color: var(--text); background: var(--surface-2); }
+.search { position: relative; margin-left: auto; width: min(380px, 40vw); }
+.search input {
+  width: 100%; height: 38px; padding: 0 38px 0 36px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--text);
+  font: inherit; font-size: 15px;
+}
+.search input::placeholder { color: var(--faint); }
+.search svg { position: absolute; left: 11px; top: 11px; color: var(--faint); }
+.search kbd.hint { position: absolute; right: 9px; top: 8px; }
+.results {
+  position: absolute; right: 0; top: 46px; width: min(560px, 92vw); max-height: 70vh; overflow: auto;
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 6px; display: none;
+}
+.results.open { display: block; }
+.results a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--text); text-decoration: none; }
+.results a .t { font-weight: 650; font-size: 14.5px; }
+.results a .s { color: var(--muted); font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
+.results a mark { background: var(--accent-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
+.results a.sel, .results a:hover { background: var(--surface); }
+.results .none { padding: 12px; color: var(--muted); font-size: 14.5px; }
+.iconbtn {
+  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); display: grid; place-items: center; cursor: pointer;
+}
+.menubtn { display: none; }
+
+/* ── layout ──────────────────────────────────────────── */
+.wrap { display: grid; grid-template-columns: 268px minmax(0, 1fr) 220px; max-width: 1360px; margin: 0 auto; }
+nav.side {
+  position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); height: calc(100vh - 60px - env(safe-area-inset-top, 0px)); overflow: auto;
+  padding: 22px 14px 40px 18px; border-right: 1px solid var(--line);
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+/* a table whose header row is empty is a plain list of rows */
+thead:not(:has(th:not(:empty))) { display: none; }
+nav.side .lead { color: var(--muted); font-size: 13.5px; margin: 0 8px 14px; }
+nav.side ol { list-style: none; margin: 0; padding: 0; }
+nav.side li > a {
+  display: block; padding: 6px 10px; border-radius: 8px; color: var(--text);
+  text-decoration: none; font-size: 15px; line-height: 1.35;
+}
+nav.side li > a:hover { background: var(--surface); }
+nav.side li > a[aria-current="page"] { background: var(--accent-soft); color: var(--text); font-weight: 650; }
+nav.side li > a .n { color: var(--faint); font-variant-numeric: tabular-nums; margin-right: 6px; font-size: 13px; }
+nav.side ol.sub { margin: 2px 0 6px 18px; border-left: 1px solid var(--line); }
+nav.side ol.sub a { font-size: 14px; color: var(--muted); padding: 4px 10px; }
+nav.side ol.sub a:hover { color: var(--text); }
+main { min-width: 0; padding: 34px 48px 80px; }
+aside.toc {
+  position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); height: calc(100vh - 60px - env(safe-area-inset-top, 0px)); overflow: auto;
+  padding: 34px 18px 40px 6px; font-size: 13.5px;
+}
+aside.toc p { margin: 0 0 8px; color: var(--faint); font-weight: 650; text-transform: uppercase; letter-spacing: .06em; font-size: 11.5px; }
+aside.toc a { display: block; color: var(--muted); text-decoration: none; padding: 3px 0 3px 10px; border-left: 2px solid transparent; }
+aside.toc a:hover { color: var(--text); }
+aside.toc a.on { color: var(--text); border-left-color: var(--accent); }
+
+/* ── content ─────────────────────────────────────────── */
+.doc { max-width: 46rem; }
+.js .doc { display: none; }
+.js .doc.current { display: block; }
+.doc h1 { font-size: 2.15rem; line-height: 1.2; letter-spacing: -.6px; margin: 4px 0 18px; }
+.doc h2 { font-size: 1.45rem; line-height: 1.3; letter-spacing: -.3px; margin: 2.2em 0 .6em; padding-top: .3em; }
+.doc h3 { font-size: 1.12rem; margin: 1.8em 0 .5em; }
+.doc h4 { font-size: 1rem; margin: 1.5em 0 .4em; color: var(--muted); }
+.doc p, .doc ul, .doc ol, .doc dl, .doc table, .doc pre, .doc .admonition { margin: 0 0 1.05em; }
+.doc ul, .doc ol { padding-left: 1.4em; }
+.doc li { margin: .3em 0; }
+.doc li > p { margin: .3em 0; }
+.doc > p:first-of-type { font-size: 1.12rem; color: var(--muted); }
+.doc strong { font-weight: 650; }
+.doc hr { border: 0; border-top: 1px solid var(--line); margin: 2.4em 0; }
+.doc dt { font-weight: 650; margin-top: .8em; }
+.doc dd { margin: .2em 0 0 1.2em; color: var(--text); }
+code { font-family: var(--mono); font-size: .88em; background: var(--code-bg); padding: .12em .38em; border-radius: 6px; }
+pre {
+  position: relative; background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; overflow: auto; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 13.8px; }
+pre .copy {
+  position: absolute; top: 8px; right: 8px; font: 600 12px var(--sans); color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; cursor: pointer;
+  opacity: 0; transition: opacity .15s;
+}
+pre:hover .copy, pre .copy:focus { opacity: 1; }
+kbd {
+  font: 600 .8em var(--sans); display: inline-block; min-width: 1.6em; text-align: center;
+  padding: .1em .45em; border-radius: 6px; border: 1px solid var(--line);
+  border-bottom-width: 2px; background: var(--surface); color: var(--text); white-space: nowrap;
+}
+table { border-collapse: collapse; width: 100%; font-size: .95em; display: block; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { font-weight: 650; color: var(--muted); font-size: .9em; border-bottom: 2px solid var(--line); }
+tr:hover td { background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.admonition { border-radius: 10px; padding: 12px 16px; background: var(--surface); border-left: 4px solid var(--note); }
+.admonition > p:last-child { margin-bottom: 0; }
+.admonition-title { font-weight: 700; margin: 0 0 4px; }
+.admonition.tip { border-left-color: var(--tip); }
+.admonition.warning { border-left-color: var(--warn); }
+.admonition.danger { border-left-color: var(--danger); }
+.admonition.note .admonition-title { color: var(--note); }
+.admonition.tip .admonition-title { color: var(--tip); }
+.admonition.warning .admonition-title { color: var(--warn); }
+.admonition.danger .admonition-title { color: var(--danger); }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); }
+.pager a {
+  flex: 1; max-width: 48%; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px;
+  text-decoration: none; color: var(--text);
+}
+.pager a:hover { border-color: var(--accent); }
+.pager a small { display: block; color: var(--faint); font-size: 12.5px; }
+.pager a.next { margin-left: auto; text-align: right; }
+
+/* ── home ────────────────────────────────────────────── */
+#home h1 { font-size: 2.6rem; letter-spacing: -1px; margin-bottom: 8px; }
+#home .tagline { font-size: 1.2rem; color: var(--muted); margin: 0 0 30px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 0 0 34px; }
+.card {
+  display: block; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); color: var(--text); text-decoration: none;
+}
+.card:hover { border-color: var(--accent); color: var(--text); }
+.card h3 { margin: 0 0 6px; font-size: 1.15rem; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+.doc ul.quick { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 30px; padding: 0; list-style: none; }
+.quick a {
+  display: inline-block; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+  color: var(--text); text-decoration: none; font-size: 14.5px; background: var(--bg);
+}
+.quick a:hover { border-color: var(--accent); }
+.home-list { columns: 2 240px; padding-left: 1.2em; }
+footer.foot { color: var(--faint); font-size: 13px; margin-top: 60px; }
+
+/* ── narrow screens ──────────────────────────────────── */
+@media (min-width: 1181px) { nav.side ol.sub { display: none; } }  /* the page's own list is on the right */
+@media (max-width: 1180px) { .wrap { grid-template-columns: 260px minmax(0, 1fr); } aside.toc { display: none; } }
+@media (max-width: 860px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); }
+  nav.side {
+    position: fixed; top: 60px; left: 0; bottom: 0; width: min(320px, 86vw); height: auto; z-index: 15;
+    background: var(--bg); transform: translateX(-102%); visibility: hidden; transition: transform .2s, visibility .2s;
+  }
+  body.menu-open nav.side { transform: none; visibility: visible; box-shadow: var(--shadow); }
+  .menubtn { display: grid; }
+  main { padding: 26px 16px 70px; }
+  .brand span.sub, .search kbd.hint { display: none; }
+  .parts { margin-left: 0; }
+  .parts a { padding: 6px 9px; }
+  .search { width: auto; flex: 1; min-width: 0; }
+  header.top { gap: 8px; padding: 0 12px; }
+  .doc h1 { font-size: 1.8rem; }
+}
+@media (max-width: 520px) { .brand b, .brand span.sub { display: none; } }
+@media print {
+  header.top, nav.side, aside.toc, .pager, pre .copy { display: none !important; }
+  .wrap { display: block; } main { padding: 0; }
+  .js .doc { display: block; page-break-before: always; }
+  #home { display: none !important; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="top">
+  <button class="iconbtn menubtn" id="menubtn" aria-label="Menu" aria-controls="side" aria-expanded="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="#home" aria-label="StandardOS Documentation, start">
+    <span class="mark" aria-hidden="true">S</span><b>StandardOS</b><span class="sub">Documentation</span>
+  </a>
+  <nav class="parts" id="parts" aria-label="Books"></nav>
+  <div class="search" role="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search the documentation" aria-label="Search the documentation" autocomplete="off" spellcheck="false">
+    <kbd class="hint">/</kbd>
+    <div class="results" id="results" role="listbox" aria-label="Search results"></div>
+  </div>
+  <button class="iconbtn" id="theme" aria-label="Light or dark">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="wrap">
+  <nav class="side" id="side" aria-label="Sections"></nav>
+  <main id="main" tabindex="-1">
+    <section class="doc" id="home">
+      <h1>StandardOS</h1>
+      <p class="tagline">The documentation: how to use it, how to fix a problem, and how it works inside.</p>
+      <div class="cards" id="homecards"></div>
+      <h2>Quick answers</h2>
+      <ul class="quick">
+        <li><a href="#guide-troubleshooting">Something is not working</a></li>
+        <li><a href="#guide-shortcuts">Keyboard shortcuts</a></li>
+        <li><a href="#guide-updates">Updates and going back</a></li>
+        <li><a href="#guide-apps">Installing an app</a></li>
+        <li><a href="#guide-controls">Settings (Controls)</a></li>
+        <li><a href="#expert-commands">Commands</a></li>
+      </ul>
+      <h2>Everything in the Guide</h2>
+      <ul class="home-list" id="homelist"></ul>
+      <noscript><p>This page works best with JavaScript on; without it, every section follows below in order.</p></noscript>
+    </section>
+{{SECTIONS}}
+    <footer class="foot">StandardOS documentation · version {{VERSION}} · this same page is on every StandardOS computer, offline (Controls → Documentation).</footer>
+  </main>
+  <aside class="toc" id="toc" aria-label="On this page"></aside>
+</div>
+<script type="application/json" id="nav-data">{{NAV_JSON}}</script>
+<script type="application/json" id="index-data">{{INDEX_JSON}}</script>
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  root.classList.add("js");
+  var NAV = JSON.parse(document.getElementById("nav-data").textContent);
+  var INDEX = JSON.parse(document.getElementById("index-data").textContent);
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+  // ── theme (remembered when the browser lets us) ──
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  var saved = store("std-doc-theme");
+  if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+  $("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next); store("std-doc-theme", next);
+  });
+
+  // ── the map: part → sections, section → part, order ──
+  var order = {}, partOf = {}, titleOf = {};
+  NAV.forEach(function (p) {
+    order[p.part] = p.sections.map(function (s) { return s.id; });
+    p.sections.forEach(function (s) { partOf[s.id] = p.part; titleOf[s.id] = s.title; });
+  });
+
+  // books in the top bar; cards and list on the home page
+  $("parts").innerHTML = NAV.map(function (p) {
+    return '<a href="#' + p.sections[0].id + '" data-part="' + p.part + '">' + esc(p.title) + "</a>";
+  }).join("");
+  $("homecards").innerHTML = NAV.map(function (p) {
+    return '<a class="card" href="#' + p.sections[0].id + '"><h3>' + esc(p.title) + " →</h3><p>" + esc(p.lead) +
+      " · " + p.sections.length + " sections</p></a>";
+  }).join("");
+  $("homelist").innerHTML = NAV[0].sections.map(function (s) {
+    return '<li><a href="#' + s.id + '">' + esc(s.title) + "</a></li>";
+  }).join("");
+
+  function sideFor(part, current) {
+    var p = NAV.filter(function (x) { return x.part === part; })[0];
+    if (!p) return "";
+    var h = '<p class="lead">' + esc(p.lead) + "</p><ol>";
+    p.sections.forEach(function (s, i) {
+      var on = s.id === current;
+      h += '<li><a href="#' + s.id + '"' + (on ? ' aria-current="page"' : "") + '><span class="n">' + (i + 1) + "</span>" + esc(s.title) + "</a>";
+      if (on && s.toc.length) {
+        h += '<ol class="sub">' + s.toc.map(function (t) { return '<li><a href="#' + t.id + '">' + esc(t.name) + "</a></li>"; }).join("") + "</ol>";
+      }
+      h += "</li>";
+    });
+    return h + "</ol>";
+  }
+
+  var tocLinks = [];
+  function tocFor(sec) {
+    var hs = sec.querySelectorAll("h2[id]");
+    if (!hs.length) { $("toc").innerHTML = ""; tocLinks = []; return; }
+    $("toc").innerHTML = "<p>On this page</p>" + Array.prototype.map.call(hs, function (h) {
+      return '<a href="#' + h.id + '">' + esc(h.textContent) + "</a>";
+    }).join("");
+    tocLinks = Array.prototype.slice.call($("toc").querySelectorAll("a"));
+  }
+  function spy() {
+    if (!tocLinks.length) return;
+    var best = null;
+    tocLinks.forEach(function (a) {
+      var h = document.getElementById(a.getAttribute("href").slice(1));
+      if (h && h.getBoundingClientRect().top < 120) best = a;
+    });
+    tocLinks.forEach(function (a) { a.classList.toggle("on", a === best); });
+  }
+  window.addEventListener("scroll", spy, { passive: true });
+
+  function pager(sec) {
+    var old = sec.querySelector(".pager"); if (old) old.remove();
+    var part = partOf[sec.id]; if (!part) return;
+    var list = order[part], i = list.indexOf(sec.id);
+    var prev = list[i - 1], next = list[i + 1];
+    if (!prev && !next) return;
+    var div = document.createElement("div"); div.className = "pager";
+    div.innerHTML = (prev ? '<a class="prev" href="#' + prev + '"><small>Previous</small>' + esc(titleOf[prev]) + "</a>" : "") +
+      (next ? '<a class="next" href="#' + next + '"><small>Next</small>' + esc(titleOf[next]) + "</a>" : "");
+    sec.appendChild(div);
+  }
+
+  var currentSec = null;
+  function go(id, fromSearch) {
+    var el = (id && document.getElementById(id)) || $("home");
+    var sec = el.closest ? el.closest("section.doc") : null;
+    if (!sec) { sec = $("home"); el = sec; }
+    if (sec !== currentSec) {
+      if (currentSec) currentSec.classList.remove("current");
+      sec.classList.add("current"); currentSec = sec;
+      var part = partOf[sec.id] || "guide";
+      Array.prototype.forEach.call($("parts").children, function (a) {
+        a.setAttribute("aria-current", sec.id !== "home" && a.getAttribute("data-part") === part ? "true" : "false");
+      });
+      pager(sec); tocFor(sec);
+      document.title = (sec.id === "home" ? "" : titleOf[sec.id] + " · ") + "StandardOS Documentation";
+    }
+    $("side").innerHTML = sideFor(partOf[sec.id] || "guide", sec.id);
+    document.body.classList.remove("menu-open");
+    $("menubtn").setAttribute("aria-expanded", "false");
+    if (el === sec) window.scrollTo(0, 0); else el.scrollIntoView();
+    spy();
+  }
+  window.addEventListener("hashchange", function () { go(location.hash.slice(1)); });
+
+  // ── search ──
+  var q = $("q"), box = $("results"), sel = -1, hits = [];
+  function terms(s) { return s.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 1; }); }
+  function snippet(text, ts) {
+    var low = text.toLowerCase(), at = -1;
+    ts.forEach(function (t) { var i = low.indexOf(t); if (i >= 0 && (at < 0 || i < at)) at = i; });
+    var start = Math.max(0, at - 60), s = (start ? "…" : "") + text.slice(start, start + 170) + (text.length > start + 170 ? "…" : "");
+    var h = esc(s);
+    ts.forEach(function (t) { h = h.replace(new RegExp("(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig"), "<mark>$1</mark>"); });
+    return h;
+  }
+  function search() {
+    var ts = terms(q.value);
+    if (!ts.length) { box.classList.remove("open"); hits = []; return; }
+    hits = [];
+    INDEX.forEach(function (e) {
+      var t = e.title.toLowerCase(), x = e.text.toLowerCase(), score = 0;
+      for (var i = 0; i < ts.length; i++) {
+        var inT = t.indexOf(ts[i]) >= 0, inX = x.indexOf(ts[i]) >= 0;
+        if (!inT && !inX) return;
+        score += (inT ? 10 : 0) + (inX ? 1 : 0);
+      }
+      if (partOf[e.section] === "guide") score += 0.5;
+      hits.push({ e: e, score: score });
+    });
+    hits.sort(function (a, b) { return b.score - a.score; });
+    hits = hits.slice(0, 14); sel = hits.length ? 0 : -1;
+    box.innerHTML = hits.length ? hits.map(function (h, i) {
+      return '<a href="#' + h.e.id + '" role="option"' + (i === 0 ? ' class="sel"' : "") + '><div class="t">' +
+        esc(h.e.title) + '</div><div class="s">' + snippet(h.e.text || h.e.title, ts) + "</div></a>";
+    }).join("") : '<div class="none">Nothing found. Try other words, or open <a href="#guide-troubleshooting">Troubleshooting</a>.</div>';
+    box.classList.add("open");
+  }
+  q.addEventListener("input", search);
+  q.addEventListener("focus", function () { if (q.value) search(); });
+  q.addEventListener("keydown", function (ev) {
+    var links = box.querySelectorAll("a[role=option]");
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault(); if (!links.length) return;
+      sel = (sel + (ev.key === "ArrowDown" ? 1 : links.length - 1)) % links.length;
+      Array.prototype.forEach.call(links, function (a, i) { a.classList.toggle("sel", i === sel); });
+      links[sel].scrollIntoView({ block: "nearest" });
+    } else if (ev.key === "Enter") {
+      if (links[sel]) { location.hash = links[sel].getAttribute("href"); box.classList.remove("open"); q.blur(); }
+    } else if (ev.key === "Escape") { box.classList.remove("open"); q.blur(); }
+  });
+  box.addEventListener("click", function (ev) { if (ev.target.closest("a")) box.classList.remove("open"); });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".search")) box.classList.remove("open"); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "/" && document.activeElement !== q && !/input|textarea/i.test(document.activeElement.tagName)) {
+      ev.preventDefault(); q.focus(); q.select();
+    }
+  });
+
+  // ── small things ──
+  $("menubtn").addEventListener("click", function () {
+    var open = document.body.classList.toggle("menu-open");
+    $("menubtn").setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("pre"), function (pre) {
+    var b = document.createElement("button"); b.className = "copy"; b.type = "button"; b.textContent = "Copy";
+    b.addEventListener("click", function () {
+      var code = pre.querySelector("code"), text = (code || pre).innerText;
+      var done = function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1400); };
+      // No clipboard allowed (some viewers refuse it): select the text, so Ctrl+C copies it.
+      var select = function () {
+        try { var r = document.createRange(); r.selectNodeContents(code || pre); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Press Ctrl+C"; setTimeout(function () { b.textContent = "Copy"; }, 2200); } catch (e) {}
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, select);
+        else select();
+      } catch (e) { select(); }
+    });
+    pre.appendChild(b);
+  });
+
+  go(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
