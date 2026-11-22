@@ -4,18 +4,28 @@
 
 ---
 
-## Three names
+## The model
 
-- **StandardOS** — *Standard*, said short — is the system: what is installed,
-  what has a version, what the boot screen says. The standard: the starting
-  point that already works.
-- **OPTIONS** is how Standard offers things: the right tool at the right
-  moment, and nothing else in the way.
-- **Golem** is the being that works inside it. It installs, updates,
-  repairs, goes back when something went wrong, connects the phone.
-  Everything a person did not have to do, Golem did.
+```
+  You  ──use──▶   STANDARD   ◀──use──  Golem
+               (the tools:
+                system + hardware)
+```
 
-OPTIONS offers. You choose. Golem does. Standard is what remains.
+- **Standard** is the tools: the system, its apps, the hardware — today the
+  computer and the phone, tomorrow Standard PC, Standard Keyboard. Tools have
+  no will: they do what they are asked. The name is the position: StandardOS
+  is meant to be what a computer should be now, *the new standard*, and every
+  tool of the family carries it.
+- **You** use the tools.
+- **Golem** uses them too, from the other side. Golem is the being of
+  Standard: it has a will, and only the one you gave it.
+- **OPTIONS** is how the tools offer themselves to you: the right tool at the
+  right moment, and nothing else in the way.
+
+**The rule the whole model stands on: Golem has no power you do not have.**
+Everything Golem does, it does with the same tools you use, in sight, and it
+can be undone.
 
 ## What Standard is
 
@@ -86,22 +96,40 @@ Three things this law is not:
 
 ## Golem
 
-**One Golem.** Each computer has its Standard; the same Golem lives in all
-of them, and in the app on the phone. There is never "the laptop's Golem":
-there is Golem, and the places where it is. A phone is not paired with a
-computer, it joins Golem; a second computer on the network does not bring a
-second one. (What makes two devices the same Golem is not decided yet.)
+**Why the rule matters.** Trust: there is no hidden magic — you can see
+what Golem did, do it yourself, or take the job away from it. Difference:
+other assistants sit on top of a system, in someone's cloud, and take your
+data with them; Golem works at your bench, on your machines. Design: every
+thing Golem does is built first as a tool you can use yourself, and every
+new tool gives Golem one more hand.
 
-**Neither a helper nor a genie.** A helper talks, suggests, turns up with
-advice: that would break the first pillar, *the environment is the
-assistant*. A genie interprets wishes, and wishes have traps. Golem is a
-golem, as in the legend: made of the clay of the house (it lives in your
-machines, not in someone's cloud), brought to life by a word, at work while
-you sleep, a guard, silent, and stopped by its maker whenever the maker
-likes. Unix calls the programs that work in the background *daemons*,
-spirits: Golem is all of them, as one being with one name.
+**One, and yours.** Every person has their Golem, and it is one in all their
+things: the computer, the other computer, the phone, the keyboard. It is the
+same for everyone — the same name, the same laws, the same voice — but each
+one works only for its owner. A school or a company has its own, looking
+after all its machines. What makes two devices the same Golem: an identity
+the owner creates at the start and adds each new device to, with their own
+confirmation.
 
-**The word** that brings it to life is `/etc/nixos`. What is written there
+**The names follow the model.** What is a tool is Standard:
+`standard-update`, `standard-recover`, Standard Files, Standard Dark,
+Standard PC. What belongs to the being is Golem: its jobs (the nightly
+update is Golem using `standard-update`), its memory (`/var/lib/golem`), its
+diary, its voice (the notices signed "Golem").
+
+**How Golem is seen — never a Clippy.** Golem is not a chat and not a face
+that talks. It is a presence with a page of its own:
+
+- **Diary**: what it did, when, why, and how to undo it.
+- **Doing**: what it is doing now.
+- **Needs you**: the decisions it does not take alone.
+- **Jobs**: what you gave it ("keep this computer up to date", "back up my
+  photos on Sundays") — and you can take any of them back.
+- **Its laws**: the contract, in sight.
+
+It does not interrupt: its worth is there when you look, not pushed at you.
+
+**The word** that brings it to life is `/etc/nixos`: what is written there
 is what the machine is. Change the word and Golem changes the machine.
 
 **Its laws** — each one already true in the code:
@@ -113,21 +141,37 @@ is what the machine is. Change the word and Golem changes the machine.
 4. It does not interrupt: it waits for a quiet moment.
 5. It does not talk, it tells: short notes, in your language, signed Golem.
 6. It never chooses for you.
-7. You can do more than it can: its files are yours, you can stop it and
+7. You can do more than it can: its tools are yours, you can stop it and
    undo what it did.
 
-**Where a person meets it.** In the notices ("Golem could not update",
-"Golem kept your edits aside"). In the installer ("Golem is going to install
-StandardOS on this disk"). In the terminal: `golem-update`, `golem-status`,
-`golem-recover` are ways of speaking to it. On the phone: the app is Golem,
-not "Standard for Android" — Standard is the computer; what reaches the
-phone is Golem.
+**Why it is the heart of the business.** Tools can be compared and copied;
+the relationship cannot.
 
-**In the code** the rule is the same: what the system IS is called
-`standard` (its options, `standard.owner`; its folder, `/etc/nixos/standard`;
-its name on the boot menu and the medium); what DOES things is called
-`golem` (its commands and services, its memory in `/var/lib/golem`, what it
-knows about this machine in `/etc/golem`).
+- *Free*: the system and your own Golem. It has to be, to be the standard.
+- *Hardware*: every Standard device is one more hand for your Golem; together
+  they work better. Continuity without walls: the tools are open, Golem is
+  what ties them together.
+- *Golem for organizations*: schools, offices and governments pay for a
+  Golem that looks after hundreds of machines. Almost all of it exists:
+  updates tested on every machine before they go out, in waves, that roll
+  back by themselves, on a declarative system.
+- *Optional services*, always chosen by the owner and with no telemetry:
+  encrypted backup; a human technician who works with the same tools and
+  appears in the diary.
+- *AI, later, as hands*: a local model to ask Golem things in words
+  ("set up this printer"), turned into uses of the tools, written in the
+  diary, undoable. Never a brain that decides for you.
+
+**What Golem already does**: it updates every night in waves, goes back
+when the desktop fails, keeps your edits through updates, cleans the disk,
+waits before suspending in the middle of a job, asks once after the
+install, and tells you, in six languages. What it lacks is a face and a
+diary.
+
+**To watch**: that it never becomes a Clippy (it says little and never
+interrupts); that its work does not stay invisible (the diary); that nobody
+mistakes it for a chat (say from the start what Golem is — the one who works
+— and what it is not).
 
 ## What Standard refuses
 
