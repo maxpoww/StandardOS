@@ -9,8 +9,7 @@
 #   SEAM_SELFTEST_STATE  XDG_STATE_HOME for the run (default: inside the throwaway profile =
 #                        no Standard theme file = Standard's dark palette, what the checks expect)
 #   SEAM_BUILD   Seam store path   (default: newest /nix/store/*-seam-<pinned version>)
-#   SEAM_SCRIPT  golem-chrome.js   (default: /etc/nixos/standard-chrome.js; in the Fedora
-#                                   toolbox that's /run/host/etc/nixos/standard-chrome.js)
+#   SEAM_SCRIPT  golem-chrome.js   (default: the one beside this script)
 #
 # Exit 0 = every case passed. The test hook is SEAM_SELFTEST in golem-chrome.js
 # (ovSelfTest): health check, then the real open -> close -> switch path, asserting

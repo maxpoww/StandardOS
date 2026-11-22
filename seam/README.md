@@ -128,7 +128,7 @@ theme and restyle all of the chrome. That's the scroll cost. Seam tint does the 
 - **Cache:** per tab and per site. Tab switches paint the known colour straight away.
 
 **Verification**
-- `node tint-oracle-check.js ./atbc-colour-oracle.js /etc/nixos/standard-chrome.js`: the shipped maths
+- `node tint-oracle-check.js ./atbc-colour-oracle.js ./golem-chrome.js`: the shipped maths
   compared with **ATBC's own colour class** (extracted from the extension) on 4,109 colours. Result: **0 mismatches** (bit-for-bit, dark and light).
 - `./selftest.sh`: real pages (red, near-white, near-black) plus scroll cases (red top → white after scrolling down → red after scrolling back up; a fixed header keeps its colour), headless. Firefox's computed theme variables
   match the expected values, and the tint clears when switched off.
