@@ -38,7 +38,7 @@ journalctl -u golem-autoupdate --no-pager -o cat -n 6 2>/dev/null | cut -c1-140
 echo "-- golem-first-boot: $(systemctl show golem-first-boot -p Result --value 2>/dev/null)"
 echo "-- waverunner-apply: path=$(systemctl is-active waverunner-apply.path 2>/dev/null) last=$(systemctl show waverunner-apply -p Result --value 2>/dev/null)"
 echo "-- seam-update: timer=$(systemctl is-active seam-update.timer 2>/dev/null) last=$(systemctl show seam-update -p Result --value 2>/dev/null) $(journalctl -u seam-update --no-pager -o cat -n 2 2>/dev/null | tail -1 | cut -c1-100)"
-echo "-- rebuild-golem: $(command -v rebuild-golem || echo MISSING)"
+echo "-- rebuild: $(command -v rebuild || echo MISSING)"
 
 section crashes
 have coredumpctl && coredumpctl list --no-pager --since "$(date -d @$(( $(date +%s) - $(cut -d. -f1 /proc/uptime) )) '+%F %T')" 2>/dev/null | awk 'NR>1{print $NF}' | sed -E 's#/nix/store/[^/]+/##' | sort | uniq -c | sort -rn | head -8

@@ -20,10 +20,10 @@ hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO
 -- land on is whatever the last repeat happened to set. One press, one flip.
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, submap_universal = true })
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, submap_universal = true })
--- golem-brightness picks the backlight driving the CONNECTED panel (adapts to the
+-- brightness picks the backlight driving the CONNECTED panel (adapts to the
 -- hybrid-GPU mux) — no hardcoded intel_backlight/nvidia_0. See system/golem-brightness.nix.
-hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("golem-brightness set 5%+"),                       { locked = true, repeating = true, submap_universal = true })
-hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("golem-brightness set 5%-"),                       { locked = true, repeating = true, submap_universal = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightness set 5%+"),                       { locked = true, repeating = true, submap_universal = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightness set 5%-"),                       { locked = true, repeating = true, submap_universal = true })
 
 -- Keyboard backlight (MacBook, ThinkPad, most laptops with a lit keyboard). The
 -- device is matched by its kernel role, not a name: smc::kbd_backlight on a
@@ -47,11 +47,11 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- (capture.rs) and has to know both ends of the press. A dock that does not
 -- answer, or one from before this: a plain shot of the screen.
 -- Shift: the whole screen, and Alt: the window, at once and with a
--- notification (golem-screenshot, system/home/screenshot.nix).
-hl.bind("Print", hl.dsp.exec_cmd("sh -c '" .. ctl .. " capture press || golem-screenshot screen'"), { submap_universal = true })
+-- notification (screenshot, system/home/screenshot.nix).
+hl.bind("Print", hl.dsp.exec_cmd("sh -c '" .. ctl .. " capture press || screenshot screen'"), { submap_universal = true })
 hl.bind("Print", hl.dsp.exec_cmd(ctl .. " capture release"), { release = true, submap_universal = true })
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("golem-screenshot screen"), { submap_universal = true })
-hl.bind("ALT + Print", hl.dsp.exec_cmd("golem-screenshot window"), { submap_universal = true })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("screenshot screen"), { submap_universal = true })
+hl.bind("ALT + Print", hl.dsp.exec_cmd("screenshot window"), { submap_universal = true })
 -- Ctrl + Print records the screen the keyboard is on (plan F3.3): the first
 -- press starts, the next stops and keeps the film in Videos/Screencasts.
 -- While it runs it is on the bar's task pill, whose Stop stops it too.

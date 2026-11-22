@@ -327,9 +327,9 @@ let
           (lib.any (p: lib.hasSuffix "hyprland-window-square-top.patch" (toString p))
             (c.programs.hyprland.package.patches or [ ])))
         # A browser killed with a webapp open took the whole session down (P4).
-        (ex "real desktop: golem-caffeine (stay awake) ships with its inhibitor unit"
+        (ex "real desktop: caffeine (stay awake) ships with its inhibitor unit"
           ((c.home-manager.users.${c.standard.owner}.systemd.user.services ? golem-caffeine)
-            && lib.any (p: (p.name or "") == "golem-caffeine") c.home-manager.users.${c.standard.owner}.home.packages))
+            && lib.any (p: (p.name or "") == "caffeine") c.home-manager.users.${c.standard.owner}.home.packages))
         # A systemd inhibitor does not stop hypridle (it reads Wayland and
         # D-Bus inhibits only): caffeine keeps the idle daemon itself off.
         (ex "caffeine: hypridle does not run while ~/.config/golem/caffeine exists"
@@ -385,7 +385,7 @@ let
           (let s = builtins.toJSON c.home-manager.users.${owner}.services.hypridle.settings; in
            lib.hasInfix "golem-lock" s && !(lib.hasInfix "|| hyprlock" s)
            && lib.hasInfix "allow_session_lock_restore = true" (luaOf c)
-           && lib.hasInfix ''hl.dsp.exec_cmd("golem-lock-screen"), { locked = true })'' (luaOf c)))
+           && lib.hasInfix ''hl.dsp.exec_cmd("lock"), { locked = true })'' (luaOf c)))
         (ex "F3.17: the portal is said out loud: Hyprland's then GTK's, nobody for Secret"
           (c.xdg.portal.enable
            # (the option's type joins a list into the file's own "a;b")
@@ -395,10 +395,10 @@ let
            && lib.any (p: lib.hasPrefix "xdg-desktop-portal-hyprland" (p.name or "")) c.xdg.portal.extraPortals))
         (ex "the login: the lock screen is the first thing the desktop starts, and it opens the keyring"
           (let
-            lockScreen = lib.findFirst (p: (p.name or "") == "golem-lock-screen")
+            lockScreen = lib.findFirst (p: (p.name or "") == "lock")
               null c.home-manager.users.${owner}.home.packages;
           in
-           lib.hasInfix "hl.on(\"hyprland.start\", function()\n-- The lock screen first: it is the login (home/idle.nix, golem-lock-screen).\nhl.exec_cmd(\"golem-lock-screen --login\")" (luaOf c)
+           lib.hasInfix "hl.on(\"hyprland.start\", function()\n-- The lock screen first: it is the login (home/idle.nix, lock).\nhl.exec_cmd(\"lock --login\")" (luaOf c)
            && lockScreen != null
            && !(lib.hasInfix ''[ -n "$returning" ] || exit 0'' (lockScreen.text or ""))
            && lib.hasInfix "gnome-keyring-daemon --start --components=pkcs11,secrets" (lockScreen.text or "")))
@@ -412,18 +412,18 @@ let
         (ex "the sunset option's hyprsunset ships in the home layer"
           (lib.any (p: (p.pname or "") == "hyprsunset") c.home-manager.users.${owner}.home.packages))
         # Print Screen (2026-11-16): the three keys run a command that ships.
-        (ex "the screenshot keys run golem-screenshot, and it ships in the home layer"
-          (lib.any (p: (p.name or "") == "golem-screenshot") c.home-manager.users.${owner}.home.packages
-           && lib.all (m: lib.hasInfix "golem-screenshot ${m}\")" (luaOf c)) [ "screen" "window" ]))
+        (ex "the screenshot keys run screenshot, and it ships in the home layer"
+          (lib.any (p: (p.name or "") == "screenshot") c.home-manager.users.${owner}.home.packages
+           && lib.all (m: lib.hasInfix "screenshot ${m}\")" (luaOf c)) [ "screen" "window" ]))
         # The capture tool (2026-11-16): Print tells the dock both ends of
         # the press (a tap is a shot, a hold records), by the dock's command
         # as it is on an install, and is still a shot of the screen where the
         # dock does not answer; the text reader ships.
         (ex "Print tells the dock its press and its release, falls back to a screen shot, and tesseract ships"
           (lib.hasInfix "ctl = \"waverunner-ctl\"," (factsOf c)
-           && lib.hasInfix "exec_cmd(\"sh -c '\" .. ctl .. \" capture press || golem-screenshot screen'\")" staticLua
+           && lib.hasInfix "exec_cmd(\"sh -c '\" .. ctl .. \" capture press || screenshot screen'\")" staticLua
            && lib.hasInfix "exec_cmd(ctl .. \" capture release\"), { release = true" staticLua
-           && lib.hasInfix "exec_cmd(\"sh -c '\" .. ctl .. \" capture shot || golem-screenshot screen'\")" staticLua
+           && lib.hasInfix "exec_cmd(\"sh -c '\" .. ctl .. \" capture shot || screenshot screen'\")" staticLua
            && lib.any (p: (p.pname or "") == "tesseract") c.home-manager.users.${owner}.home.packages))
         (ex "what each update changed is written by hand and carried by the system"
           (c.environment.etc ? "golem/whats-new.json"))
@@ -591,10 +591,10 @@ let
         (ex "real desktop: a desktop that comes back after a crash comes back locked (2026-11-12)"
           (let
             lua = luaOf c;
-            lockScreen = lib.findFirst (p: (p.name or "") == "golem-lock-screen")
+            lockScreen = lib.findFirst (p: (p.name or "") == "lock")
               null c.home-manager.users.${owner}.home.packages;
           in
-            lib.hasInfix ''hl.exec_cmd("golem-lock-screen --login")'' lua
+            lib.hasInfix ''hl.exec_cmd("lock --login")'' lua
             && lockScreen != null
             # the second start of a boot is told from the first by a marker
             && lib.hasInfix ''[ -e "$run/desktop-started" ] && returning=1'' (lockScreen.text or "")))

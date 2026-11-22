@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, osConfig, ... }:
 
 {
   # System utilities
@@ -143,8 +143,7 @@ programs.fzf = {
 
     shellAliases = {
       # Nixos 
-      build = "rebuild-golem && hyprctl reload";
-      update = "sudo nixos-rebuild switch --upgrade && hyprctl reload"; 
+      build = "rebuild && hyprctl reload";
 
       # Better ls
       ls = "eza --icons";
@@ -171,6 +170,11 @@ programs.fzf = {
 
       # Video
       stream = "mpv av://v4l2:/dev/video4 --fullscreen --demuxer-lavf-o=input_format=mjpeg,framerate=30 --profile=low-latency --untimed";
+    } // lib.optionalAttrs (!(osConfig.standard ? machine)) {
+      # `update` is a command of every Standard machine (the /etc/nixos
+      # layout, system/machine): an alias of that name would hide it there.
+      # A machine outside the layout (the dev box) keeps this one.
+      update = "sudo nixos-rebuild switch --upgrade && hyprctl reload";
     };
 
     # Updated to initContent (Home Manager 26.05+)

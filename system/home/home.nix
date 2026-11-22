@@ -31,6 +31,10 @@
     ./default-apps.nix    # which program opens each kind of file
     waverunner.homeManagerModules.default
   ];
+
+  # The owner's tools by their old name too (golem-caffeine is
+  # caffeine…): an older dock runs them by that name.
+  home.extraProfileCommands = import ../old-command-names.nix;
   # ./waverunner-packages.nix (the owner's launcher-installed list) is NOT
   # imported here any more — configuration.nix imports it for non-lean
   # systems only. It is one machine's state, not the distro: a lean image
@@ -47,7 +51,7 @@
 
   # Desktop plumbing every Standard needs, lean or not.
   home.packages = with pkgs; [
-    adw-gtk3   # libadwaita's look for GTK 3 apps; the dock themes it with the palette (Golem-A/B)
+    adw-gtk3   # libadwaita's look for GTK 3 apps; the dock themes it with the palette (Standard-A/B)
     papirus-icon-theme
     phinger-cursors
     wl-clipboard

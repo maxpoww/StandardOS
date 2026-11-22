@@ -340,7 +340,7 @@ root account gets no password; the owner uses `sudo` with their own.
 |---|---|
 | UEFI | GRUB-EFI at the removable fallback path (`EFI/BOOT/BOOTX64.EFI`). No firmware (NVRAM) entry is written. At most 3 entries, so the 512 MiB ESP never fills. |
 | BIOS | GRUB in the BIOS boot partition, up to 15 entries |
-| Both | a 1 s menu, then "Start Standard"; older systems under "Previous Versions". Editing an entry asks for a boot password (user `golem`), made on the machine and shown by `sudo golem-boot-password`. |
+| Both | a 1 s menu, then "Start Standard"; older systems under "Previous Versions". Editing an entry asks for a boot password (user `golem`), made on the machine and shown by `sudo boot-password`. |
 
 ### The account
 
@@ -379,7 +379,7 @@ because a git flake sees only tracked or staged files.
 | `default.nix` | distro source, not written by the install | the import list of the old all-in-one target; installs do not use it |
 
 Every rebuilt generation also keeps a copy of this folder at
-`/etc/golem/machine`, so `golem-recover` can always rebuild what runs.
+`/etc/golem/machine`, so `recover` can always rebuild what runs.
 
 A shortened `machine.nix`, as the engine writes it (example values):
 
@@ -476,10 +476,10 @@ The full story is [updates/README.md](../../updates/README.md). In short:
 | Wave | A new version waits the machine's wave: 0 to 6 days from its machine-id (the lab: 0), counted from when the machine first saw it was behind, or from the version's publication if that is earlier. |
 | How | Wait for the internet; pull `stable`, fast-forward only; check that every changed file is upstream's own code (`golem-seal-heal`); build root's copy with `golem-rebuild boot`. |
 | Live | At the next restart. Never a live switch, never a forced reboot. |
-| Failure | A version that does not build: the source goes back to what built the running system (`golem-recover`). A version that crash-loops the desktop: the machine rolls back and holds that revision. |
+| Failure | A version that does not build: the source goes back to what built the running system (`recover`). A version that crash-loops the desktop: the machine rolls back and holds that revision. |
 | The owner is told | "Golem has an update ready" after 2 days waiting for a restart; "Golem could not update" after 7 days without a run that worked. Nothing leaves the machine. |
 | Update now | The Controls button starts `golem-update-now`: one run that skips the wave. |
-| The owner's own edits | Edits to Standard's files outside `hosts/target/` are copied to `~/Golem-local-edits/<time>/` and put back before a pull. To build their own change the owner runs `rebuild-golem` (asks for the password, builds a copy and seals that same copy) or approves it with `sudo golem-bless`. Root never builds a change nobody approved. |
+| The owner's own edits | Edits to Standard's files outside `hosts/target/` are copied to `~/Golem-local-edits/<time>/` and put back before a pull. To build their own change the owner runs `rebuild` (asks for the password, builds a copy and seals that same copy) or approves it with `sudo golem-bless`. Root never builds a change nobody approved. |
 
 ## 6. The lab door
 

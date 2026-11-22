@@ -29,7 +29,7 @@ hl.bind(mainMod .. " + SHIFT + W", hl.dsp.window.move({ direction = "up" }))
 -- This keyboard's key cannot be held (it lets go by itself), so it is the
 -- tap alone: the dock's `capture shot` (see PrtSc in binds/keys.lua). A dock that does
 -- not answer, or one from before the tool: a plain shot of the screen.
-local screenshot = hl.dsp.exec_cmd("sh -c '" .. ctl .. " capture shot || golem-screenshot screen'")
+local screenshot = hl.dsp.exec_cmd("sh -c '" .. ctl .. " capture shot || screenshot screen'")
 hl.bind(mainMod .. " + SHIFT + S", function()
     if G.superBurst then
         hl.dispatch(screenshot)

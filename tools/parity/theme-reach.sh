@@ -109,10 +109,10 @@ special() {
     yazi*) echo "covered|yazi theme.toml";;
     lf) echo "covered|in the terminal (foot's colours)";;
     xterm*|.xterm*) echo "n/a|old X program (not themed by design)";;
-    blueman*|..blueman*|thunar*|.thunar*) echo "covered|GTK 3 theme (Golem-A/B)";;
+    blueman*|..blueman*|thunar*|.thunar*) echo "covered|GTK 3 theme (Standard-A/B)";;
     lsp-plugins*) echo "MISSING|draws itself (its own skin)";;
     launch-arch-vm*|qemu*) echo "n/a|a virtual machine's own screen";;
-    nvidia-settings*|.nvidia-settings*) echo "covered|GTK 3 theme (Golem-A/B)";;
+    nvidia-settings*|.nvidia-settings*) echo "covered|GTK 3 theme (Standard-A/B)";;
     mpv*) echo "look|a player: draws its own controls";;
     scrcpy*|bash) echo "n/a|the phone's own screen";;
     *.html) echo "covered|opens in Seam";;
@@ -126,7 +126,7 @@ special() {
 # What the toolkit's route gives.
 route() {
   case "$1" in
-    gtk3) echo "covered|GTK 3 theme (Golem-A/B)";;
+    gtk3) echo "covered|GTK 3 theme (Standard-A/B)";;
     gtk4) echo "covered|GTK 4 libadwaita colours";;
     qt5|qt6) echo "covered|qt5ct/qt6ct colours";;
     kde) echo "covered|kdeglobals colour scheme";;

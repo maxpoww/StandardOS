@@ -80,7 +80,7 @@ in
       # Build parallelism is a memory decision on a tight machine: one
       # nixos-rebuild eval wants 2-3 GB, so two parallel derivations on
       # 4 GB is a freeze (zram merely makes it slow-motion). One job,
-      # two compiler threads — rebuild-golem stays survivable.
+      # two compiler threads — rebuild stays survivable.
       nix.settings.max-jobs = tier 1;
       nix.settings.cores = tier 2;
     })

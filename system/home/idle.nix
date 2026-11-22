@@ -14,7 +14,7 @@
 # (system/Modular/desktop/idle.nix).
 #
 # CAFFEINE (Max, 2026-09-30: "configure a caffeine and toggle it on so they
-# stay awake"): `golem-caffeine on|off|status`. On does two things:
+# stay awake"): `caffeine on|off|status`. On does two things:
 #   - hypridle does not run at all (no lock, no screen-off, no idle suspend):
 #     its unit only starts while ~/.config/golem/caffeine is absent;
 #   - a systemd inhibitor on the LID SWITCH only, so closing the lid does
@@ -37,7 +37,7 @@
 #
 # THE LOGIN (Max, 2026-10-28: "tenemos que poner una pantalla de login … ¿se
 # puede usar la misma que la pantalla de bloqueo?"): the same lock screen is
-# the desktop's first screen (golem-lock-screen --login, the first thing
+# the desktop's first screen (lock --login, the first thing
 # hyprland.lua starts). standard.home.loginLock.enable = false opens the desktop
 # at once, as before.
 { config, lib, pkgs, ... }:
@@ -79,7 +79,7 @@ let
   # input could unlock them (2026-09-30). Super+L launches it the same way.
   golemLock = pkgs.writeShellScript "golem-lock" ''
     pidof hyprlock >/dev/null && exit 0
-    exec hyprctl dispatch 'hl.dsp.exec_cmd("${golemLockScreen}/bin/golem-lock-screen")'
+    exec hyprctl dispatch 'hl.dsp.exec_cmd("${golemLockScreen}/bin/lock")'
   '';
   lock = "${golemLock}";
   # THE LOCK SCREEN, as the compositor runs it (every lock: the idle one
@@ -99,7 +99,7 @@ let
   # 2026-11-12; Max: "fix it"). The marker lives in the runtime dir, which
   # logind keeps for as long as the session (the keeper holds it) and empties
   # at every boot.
-  golemLockScreen = pkgs.writeShellScriptBin "golem-lock-screen" ''
+  golemLockScreen = pkgs.writeShellScriptBin "lock" ''
     if [ "''${1:-}" = --login ]; then
       run="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}/golem"
       ${pkgs.coreutils}/bin/mkdir -p "$run"
@@ -167,14 +167,14 @@ let
     exec systemctl suspend
   '';
   idleSuspend = "${golemIdleSuspend}";
-  golemCaffeine = pkgs.writeShellScriptBin "golem-caffeine" ''
+  golemCaffeine = pkgs.writeShellScriptBin "caffeine" ''
     state="$HOME/.config/golem/caffeine"
     case "''${1:-status}" in
       on)
         mkdir -p "$(dirname "$state")" && touch "$state"
         systemctl --user stop hypridle.service 2>/dev/null
         systemctl --user start golem-caffeine.service
-        echo "caffeine ON: no lock, no screen-off, no idle sleep, the lid does not sleep (a nearly flat battery still does). Undo: golem-caffeine off" ;;
+        echo "caffeine ON: no lock, no screen-off, no idle sleep, the lid does not sleep (a nearly flat battery still does). Undo: caffeine off" ;;
       off)
         rm -f "$state"
         systemctl --user stop golem-caffeine.service
@@ -182,16 +182,17 @@ let
         echo "caffeine OFF: lock, screen-off and sleep are back" ;;
       status)
         if systemctl --user is-active --quiet golem-caffeine.service; then echo on; else echo off; fi ;;
-      *) echo "usage: golem-caffeine on|off|status" >&2; exit 2 ;;
+      *) echo "usage: caffeine on|off|status" >&2; exit 2 ;;
     esac
   '';
 in
 {
   standard.home.idleSuspend = golemIdleSuspend;
-  home.packages = [ golemCaffeine golemLockScreen ];
+  # (hiPrio: caffeine-ng brings a `caffeine` of its own; this one wins.)
+  home.packages = map lib.hiPrio [ golemCaffeine golemLockScreen ];
   systemd.user.services.golem-caffeine = {
     Unit = {
-      Description = "Golem caffeine: stay awake (golem-caffeine on|off)";
+      Description = "Golem caffeine: stay awake (caffeine on|off)";
       ConditionPathExists = "%h/.config/golem/caffeine";
       PartOf = [ "graphical-session.target" ];
       After = [ "graphical-session.target" ];

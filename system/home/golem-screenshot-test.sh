@@ -200,8 +200,8 @@ run nonsense
 [ "$status" -eq 2 ] || bad "usage: exit $status"
 
 if [ "$fails" -eq 0 ]; then
-  echo "golem-screenshot: all cases pass"
+  echo "screenshot: all cases pass"
 else
-  echo "golem-screenshot: $fails failed"
+  echo "screenshot: $fails failed"
   exit 1
 fi

@@ -27,10 +27,10 @@
 #                                  nixos-rebuild finds /etc/nixos/flake.nix,
 #                                  and builds what the folder holds NOW —
 #                                  an edit in configuration.nix or in standard/
-#   rebuild-golem                  the same behind Standard's one rebuild lock
-#   golem-update                   this machine onto the newest Standard
-#   golem-recover                  Standard's files back to what built a system
-#   golem-status                   what was changed here, against upstream
+#   rebuild                  the same behind Standard's one rebuild lock
+#   update                   this machine onto the newest Standard
+#   recover                  Standard's files back to what built a system
+#   status                   what was changed here, against upstream
 #
 # The nightly update, the dock's installs and the other services of this
 # layout are their own leaves beside this file (update.nix, apps.nix…).
@@ -119,12 +119,12 @@ let
     }
   '';
 
-  # `rebuild-golem`: what an owner types after editing /etc/nixos. Behind the
+  # `rebuild`: what an owner types after editing /etc/nixos. Behind the
   # one rebuild lock (golem-rebuild), always this machine's `default`, so it
   # also works right after a rename (nixos-rebuild asks for the attribute
   # named after the RUNNING hostname).
   rebuildGolem = pkgs.writeShellApplication {
-    name = "rebuild-golem";
+    name = "rebuild";
     runtimeInputs = [ config.standard.rebuild ];
     text = ''
       action=''${1:-switch}; [ $# -gt 0 ] && shift
@@ -135,14 +135,14 @@ let
     '';
   };
 
-  # `golem-status`: what this machine changed in Standard's files.
+  # `status`: what this machine changed in Standard's files.
   status = pkgs.writeShellApplication {
-    name = "golem-status";
+    name = "status";
     runtimeInputs = [ pkgs.git pkgs.coreutils pkgs.gnused ];
     text = ''
       if [ "$(id -u)" != 0 ]; then exec sudo "$0" "$@"; fi
       ${gitFn}
-      need_checkout golem-status
+      need_checkout status
       base=$(base_rev)
       if [ -z "$base" ] || ! g rev-parse -q --verify HEAD >/dev/null 2>&1; then
         said=$(said_rev)
@@ -171,7 +171,7 @@ let
     '';
   };
 
-  # `golem-update`: this machine onto the newest Standard of the branch it
+  # `update`: this machine onto the newest Standard of the branch it
   # follows.
   #
   # THE EDITS ARE KEPT. Root may have changed Standard's files here. The update
@@ -188,13 +188,13 @@ let
   # exactly as it was. The new system starts at the next boot (as the
   # nightly update's does), or now with `--now`.
   #
-  #   golem-update            the newest version, started at the next boot
-  #   golem-update --now      …switched to at once
-  #   golem-update --nightly  the nightly run: this machine's wave, the held
+  #   update            the newest version, started at the next boot
+  #   update --now      …switched to at once
+  #   update --nightly  the nightly run: this machine's wave, the held
   #                           versions, and never a build without the
   #                           version's published pieces (update.nix)
   update = pkgs.writeShellApplication {
-    name = "golem-update";
+    name = "update";
     runtimeInputs = [
       config.standard.rebuild
       config.standard.update.waveCommand
@@ -215,18 +215,18 @@ let
           --now) action=switch ;;
           --nightly) nightly=1 ;;
           --converge) converge=1 ;;
-          *) echo "golem-update: unknown argument: $a" >&2; exit 2 ;;
+          *) echo "update: unknown argument: $a" >&2; exit 2 ;;
         esac
       done
       ${gitFn}
-      need_checkout golem-update
+      need_checkout update
       state=/var/lib/golem
       install -d -m 700 "$state"
 
       # One rebuild at a time, held from the fetch to the last file put in
       # place: a dock install never builds a half-updated folder.
       exec 9>>/run/golem-rebuild.lock
-      flock -w 7200 9 || { echo "golem-update: another rebuild has been running for 2 h — giving up" >&2; exit 1; }
+      flock -w 7200 9 || { echo "update: another rebuild has been running for 2 h — giving up" >&2; exit 1; }
       export GOLEM_REBUILD_LOCK_HELD=1
       # A try left by a run that was killed (the power went): none is in use,
       # this run holds the lock.
@@ -234,7 +234,7 @@ let
 
       # 75 = THE NETWORK, not the version (the nightly run comes back in an hour).
       if ! g fetch --quiet --no-tags origin "+refs/heads/$branch:refs/remotes/origin/$branch"; then
-        echo "golem-update: $(g remote get-url origin 2>/dev/null || echo upstream) could not be reached" >&2
+        echo "update: $(g remote get-url origin 2>/dev/null || echo upstream) could not be reached" >&2
         exit 75
       fi
       new=$(g rev-parse "refs/remotes/origin/$branch")
@@ -258,7 +258,7 @@ let
       # file by file. Upstream counts as new only when it has something this
       # machine does not.
       if [ -n "$base" ] && [ "$new" != "$base" ] && g merge-base --is-ancestor "$new" "$base" 2>/dev/null; then
-        echo "golem-update: this machine's Standard (''${base:0:12}) is ahead of $branch (''${new:0:12}) — nothing to take from it"
+        echo "update: this machine's Standard (''${base:0:12}) is ahead of $branch (''${new:0:12}) — nothing to take from it"
         new=$base
       fi
       built=$(/nix/var/nix/profiles/system/sw/bin/nixos-version --configuration-revision 2>/dev/null || true)
@@ -274,12 +274,12 @@ let
       asis=0
       if [ "$converge" = 1 ] && [ -z "$base" ]; then
         asis=1
-        echo "golem-update: the version of the files in $co is not known to $branch — building this machine's own system from them as they are"
+        echo "update: the version of the files in $co is not known to $branch — building this machine's own system from them as they are"
       fi
 
       if [ "$new" = "$base" ] && [ "$built" = "$base" ] && [ "$converge" = 0 ]; then
         rm -f "$since"
-        echo "golem-update: already on the newest Standard (''${new:0:12})"
+        echo "update: already on the newest Standard (''${new:0:12})"
         exit 0
       fi
 
@@ -287,7 +287,7 @@ let
       # (desktop/crash-recovery.nix went back from it): the nightly run
       # never builds it again, it waits for the next.
       if [ "$nightly" = 1 ] && [ -s "$state/held-revisions" ] && grep -qx "$new" "$state/held-revisions"; then
-        echo "golem-update: upstream is at ''${new:0:12}, which crashed this machine's desktop — holding until a newer version is out."
+        echo "update: upstream is at ''${new:0:12}, which crashed this machine's desktop — holding until a newer version is out."
         exit 0
       fi
       if [ "$nightly" = 1 ] && [ "$new" != "$base" ]; then
@@ -302,7 +302,7 @@ let
         if [[ "$published" =~ ^[0-9]+$ ]] && [ "$published" -lt "$from" ]; then from=$published; fi
         age=$(( $(date +%s) - from ))
         if [ "$age" -lt $(( wave * 86400 )) ] && [ ! -e /run/golem-update-now ]; then
-          echo "golem-update: a new version is out; this machine is in wave $wave and takes it in about $(( (wave * 86400 - age + 3599) / 3600 )) h."
+          echo "update: a new version is out; this machine is in wave $wave and takes it in about $(( (wave * 86400 - age + 3599) / 3600 )) h."
           exit 0
         fi
         # The nightly run never compiles a version whose published pieces
@@ -324,7 +324,7 @@ let
         base_tree=""
         parent=()
         unrelated=(--allow-unrelated-histories)
-        echo "golem-update: the version of the files in $co is not known upstream — what differs from the new one will be set aside"
+        echo "update: the version of the files in $co is not known upstream — what differs from the new one will be set aside"
       fi
       if [ "$asis" = 1 ]; then
         final=$mine
@@ -339,7 +339,7 @@ let
         g merge-tree --write-tree --name-only --no-messages -z "''${unrelated[@]}" "$new" "$local_commit" > "$merged" || mrc=$?
         if [ "$mrc" -gt 1 ]; then
           rm -f "$merged"
-          echo "golem-update: the new version could not be merged with this machine's changes (git merge-tree: $mrc)" >&2
+          echo "update: the new version could not be merged with this machine's changes (git merge-tree: $mrc)" >&2
           exit 1
         fi
         IFS= read -r -d "" final < "$merged"
@@ -362,7 +362,7 @@ let
             if [ -n "$entry" ]; then
               GIT_INDEX_FILE="$idx" g update-index --add --cacheinfo "$entry,$f"
             fi
-            echo "golem-update: $f — changed here and in the new version: Standard's is taken, this machine's is in $aside/$f"
+            echo "update: $f — changed here and in the new version: Standard's is taken, this machine's is in $aside/$f"
           done < "$merged"
           final=$(GIT_INDEX_FILE="$idx" g write-tree)
           rm -f "$idx"
@@ -386,7 +386,7 @@ let
         GIT_INDEX_FILE="$idx" g update-index --add --cacheinfo "$entry,$pin"
         final=$(GIT_INDEX_FILE="$idx" g write-tree)
         rm -f "$idx"
-        echo "golem-update: this machine's browser is newer ($mine_v) than the new Standard's ($final_v) — its pin stays"
+        echo "update: this machine's browser is newer ($mine_v) than the new Standard's ($final_v) — its pin stays"
       fi
       if [ -n "$aside" ] && [ -e "$aside/$pin" ]; then
         rm -f "$aside/$pin"
@@ -417,11 +417,11 @@ let
       if [ "$asis" = 1 ]; then
         :   # said above
       elif [ "$new" = "$base" ] && [ "$converge" = 1 ]; then
-        echo "golem-update: building this machine's own system from $dir (Standard ''${new:0:12})"
+        echo "update: building this machine's own system from $dir (Standard ''${new:0:12})"
       elif [ "$new" = "$base" ]; then
-        echo "golem-update: Standard ''${new:0:12} is in $co but the newest built system is ''${built:-unknown} — building it"
+        echo "update: Standard ''${new:0:12} is in $co but the newest built system is ''${built:-unknown} — building it"
       else
-        echo "golem-update: ''${base:0:12}''${base:+ }→ ''${new:0:12}"
+        echo "update: ''${base:0:12}''${base:+ }→ ''${new:0:12}"
       fi
       rrc=0
       golem-rebuild "$action" --flake "path:$try#default" || rrc=$?
@@ -430,11 +430,11 @@ let
         # taken away from the folder either.
         [ -z "$aside" ] || rm -rf "$aside"
         if [ "$asis" = 1 ]; then
-          echo "golem-update: the files in $co do not build here — the machine stays as it was" >&2
+          echo "update: the files in $co do not build here — the machine stays as it was" >&2
         elif [ "$rrc" = 75 ]; then
-          echo "golem-update: GitHub could not be asked for ''${new:0:12}'s published pieces — nothing compiled, the machine stays as it was" >&2
+          echo "update: GitHub could not be asked for ''${new:0:12}'s published pieces — nothing compiled, the machine stays as it was" >&2
         else
-          echo "golem-update: ''${new:0:12} does not build here — the machine stays as it was" >&2
+          echo "update: ''${new:0:12} does not build here — the machine stays as it was" >&2
         fi
         exit "$rrc"
       fi
@@ -451,7 +451,7 @@ let
         # Nothing of the folder changed, and git is told nothing: the files
         # are still of a version it does not have.
         said=$(said_rev)
-        echo "golem-update: this machine is on its own system$([ "$action" = boot ] && echo ' from its next start') (Standard ''${said:-of a version}''${said:+, a version} $branch does not know: an update takes the branch's when it is asked)"
+        echo "update: this machine is on its own system$([ "$action" = boot ] && echo ' from its next start') (Standard ''${said:-of a version}''${said:+, a version} $branch does not know: an update takes the branch's when it is asked)"
         exit 0
       fi
       rsync -a --checksum --exclude=/.git "$try/standard/" "$co/"
@@ -463,14 +463,14 @@ let
       g read-tree "$new"
       rm -f "$since" /run/golem-update-now
       if [ -n "$aside" ]; then
-        echo "golem-update: files this machine had changed were set aside in $aside (golem-status shows what is still changed)"
+        echo "update: files this machine had changed were set aside in $aside (status shows what is still changed)"
         printf '%s\n' "$aside" > "$state/local-edits/latest"
       fi
-      echo "golem-update: this machine is on Standard ''${new:0:12}$([ "$action" = boot ] && echo ' from its next start')"
+      echo "update: this machine is on Standard ''${new:0:12}$([ "$action" = boot ] && echo ' from its next start')"
     '';
   };
 
-  # `golem-recover [system]`: Standard's files back to what built a given system
+  # `recover [system]`: Standard's files back to what built a given system
   # (the running one by default). Going back a version — after a crash loop,
   # or asked for in Controls → Updates (desktop/crash-recovery.nix) — switches
   # the generation; without this the folder would still hold the version
@@ -479,7 +479,7 @@ let
   # with this machine's edits included. Only standard/ is put back:
   # configuration.nix, modules/ and machine/ are the machine's and stay.
   recover = pkgs.writeShellApplication {
-    name = "golem-recover";
+    name = "recover";
     runtimeInputs = [ pkgs.git pkgs.rsync pkgs.coreutils pkgs.diffutils pkgs.gnused ];
     text = ''
       sys=$(readlink -f "''${1:-/run/current-system}")
@@ -488,11 +488,11 @@ let
       [ -f "$kept/flake.nix" ] || kept="$sys/etc/golem/machine/golem"
       ${gitFn}
       if [ ! -f "$kept/flake.nix" ]; then
-        echo "golem-recover: $(basename "$sys") keeps no copy of Standard — the folder stays as it is" >&2
+        echo "recover: $(basename "$sys") keeps no copy of Standard — the folder stays as it is" >&2
         exit 1
       fi
       if diff -rq --exclude=.git "$kept" "$co" >/dev/null 2>&1; then
-        echo "golem-recover: $co already holds the Standard that built $(basename "$sys")"
+        echo "recover: $co already holds the Standard that built $(basename "$sys")"
         exit 0
       fi
       # (The kept copy is in the store: read-only files. Here they are root's
@@ -512,7 +512,7 @@ let
         g symbolic-ref HEAD "refs/heads/$branch"
         g read-tree "$rev"
       fi
-      echo "golem-recover: $co holds the Standard that built $(basename "$sys") again''${rev:+ (''${rev:0:12})}"
+      echo "recover: $co holds the Standard that built $(basename "$sys") again''${rev:+ (''${rev:0:12})}"
     '';
   };
 
@@ -543,7 +543,7 @@ in
       type = lib.types.package;
       internal = true;
       readOnly = true;
-      description = "golem-update: this machine onto the newest Standard (the nightly update runs it: ./update.nix).";
+      description = "update: this machine onto the newest Standard (the nightly update runs it: ./update.nix).";
     };
     folder = lib.mkOption {
       type = lib.types.path;
@@ -572,7 +572,7 @@ in
     # files and, when Standard is the folder's standard/ (a machine; not a check's
     # fixture), Standard as it was — this machine's edits included. A generation
     # can always be rebuilt, and a folder edited into a state that no longer
-    # builds can be put back from the running system (golem-recover).
+    # builds can be put back from the running system (recover).
     # (The folder is the build's own source, already in the store: this is a
     # link to it, not another copy.)
     environment.etc."golem/machine".source = "${cfg.folder}";
@@ -586,7 +586,9 @@ in
       leaves = cfg.leaves;
     };
 
-    environment.systemPackages = [ rebuildGolem update recover status checkout ];
+    # (hiPrio: Standard's command wins over an app's of the same name —
+    # `update` is also a program of zammad, apache-jena and lacus.)
+    environment.systemPackages = map lib.hiPrio [ rebuildGolem update recover status ] ++ [ checkout ];
 
     # (The folder's old name, see moveFolder: at the activation of every
     # system, a no-op once moved.)

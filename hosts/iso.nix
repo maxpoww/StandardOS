@@ -70,7 +70,7 @@
   users.users.${config.standard.owner}.initialHashedPassword = "";
 
   # No flake checkout on the live medium (standard.flakeDir stays null), so
-  # waverunner-apply and rebuild-golem are absent by design: a nixos-rebuild
+  # waverunner-apply and rebuild are absent by design: a nixos-rebuild
   # into a tmpfs overlay would fill RAM and vanish on reboot. The visible
   # consequence, and it is the right one to know before a demo: dragging an
   # app into the Install section in the LIVE session does nothing. Installed

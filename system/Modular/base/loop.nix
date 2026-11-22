@@ -2,7 +2,7 @@
 # The minimal twin of hosts/target/default.nix's tail (which wires the
 # FAT standard-target): point the seed's checkout and name the attr this
 # machine rebuilds itself AS. Without this flakeDir is null →
-# selfrebuild.nix emits no rebuild-golem and the machine cannot climb
+# selfrebuild.nix emits no rebuild and the machine cannot climb
 # stages (finding #62, caught by the VM self-rebuild proof 2026-09-10).
 #
 # flakeAttr = standard-minimal: the machine reproduces the composition it

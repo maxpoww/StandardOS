@@ -19,7 +19,7 @@
 #                                     restart; a running session is not
 #                                     touched
 #
-# The update itself is `golem-update --nightly` (./layout.nix): this
+# The update itself is `update --nightly` (./layout.nix): this
 # machine's wave, the versions held after a crash loop, the merge of the new
 # version into root's copy with its edits kept, the build from a root-only
 # try, and /etc/nixos moved only when it built.
@@ -97,7 +97,7 @@ in
       asked_now=0; [ -e /run/golem-update-now ] && asked_now=1
       before=""; [ -f /var/lib/golem/local-edits/latest ] && before=$(cat /var/lib/golem/local-edits/latest)
       rc=0
-      golem-update --nightly || rc=$?
+      update --nightly || rc=$?
       if [ "$rc" = 75 ]; then
         # "Update now" stays asked for the hour's retry (not its wave).
         if [ "$asked_now" = 1 ]; then touch /run/golem-update-now; fi

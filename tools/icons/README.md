@@ -11,7 +11,7 @@ Apps are not here — the theme inherits Papirus-Dark for everything else.
   devices (`devices/`, the same card with no fold and a light). Names that mean
   the same thing are links to one icon.
 - `center.py` — measures every symbol as resvg draws it → `centers.json`.
-- `build-theme.sh` — writes the theme (`system/home/icons/Golem`): the
+- `build-theme.sh` — writes the theme (`system/home/icons/Standard`, and `Standard-Dark`): the
   scalable drawing plus 24 and 16 px versions (darker, heavier, no hairlines).
 
 After adding or changing a symbol: `python3 center.py && ./build-theme.sh`.

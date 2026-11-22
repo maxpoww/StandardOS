@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Sourced by golem-recover (base/recover.nix) and by recover-standing-test.sh.
+# Sourced by recover (base/recover.nix) and by recover-standing-test.sh.
 #
 # STANDING FILES of the machine layer: choices that belong to the MACHINE,
 # not to a version, so going back never takes them away. Today one: lab.nix,
@@ -29,6 +29,6 @@ keep_standing() {
     asowner install -m 0644 "$from/$b" "$layer/$b"
     asowner git add -f "$layer/$b"
     cp -L "$from/$b" "$trusted/$b"
-    echo "golem-recover: kept $layer/$b (a choice of this machine, not of a version)"
+    echo "recover: kept $layer/$b (a choice of this machine, not of a version)"
   done
 }

@@ -110,7 +110,7 @@
     if ! ${pkgs.procps}/bin/pgrep -u "$uid" > /dev/null 2>&1; then exit 0; fi
     printf '%s\n' "''${1:-}" > /run/golem-owner-waits
     echo "golem-owner: this system's owner is '$new' and '$old' is logged in: the account is renamed at a restart, so this system can only start at one."
-    echo "golem-owner: stage it and restart:  sudo rebuild-golem boot   (or: sudo nixos-rebuild boot)"
+    echo "golem-owner: stage it and restart:  sudo rebuild boot   (or: sudo nixos-rebuild boot)"
     exit 1
   '';
   system.activationScripts.golemOwnerRename = {
@@ -213,7 +213,7 @@
   # `nixos-rebuild edit`) — no password, and the seed's seal never asked.
   # Found by golem-deep on the MacBook, 2026-10-01. Unattended rebuilds run
   # as root services (waverunner-apply, golem-autoupdate, seam-update); the
-  # owner's own rebuild-golem asks for the password, which is the consent
+  # owner's own rebuild asks for the password, which is the consent
   # its golem-bless relies on. (The dev box keeps its own NOPASSWD dev loop
   # in system/configuration.nix.)
 }

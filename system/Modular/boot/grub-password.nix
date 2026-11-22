@@ -12,7 +12,7 @@
 #
 # THE PASSWORD: made on the machine the first time its bootloader is installed,
 # random, and kept root-only in /var/lib/golem/secrets — never in the flake or
-# the store. `sudo golem-boot-password` shows it, for the rare day someone needs
+# the store. `sudo boot-password` shows it, for the rare day someone needs
 # to edit a boot line. Its letters are the ones that sit on the same keys in
 # QWERTY, QWERTZ and AZERTY, because GRUB reads every keyboard as US.
 #
@@ -29,10 +29,10 @@ let
   # The grub Standard installs (patched by the overlay); null-safe, unlike
   # system.build.grub on a "nodev" install.
   grub = pkgs.grub2;
-  show = pkgs.writeShellScriptBin "golem-boot-password" ''
-    if [ "$(id -u)" != 0 ]; then echo "golem-boot-password: run with sudo" >&2; exit 1; fi
+  show = pkgs.writeShellScriptBin "boot-password" ''
+    if [ "$(id -u)" != 0 ]; then echo "boot-password: run with sudo" >&2; exit 1; fi
     if [ ! -s ${secrets}/boot-password ]; then
-      echo "golem-boot-password: none yet (it is made with the next bootloader install)" >&2; exit 1
+      echo "boot-password: none yet (it is made with the next bootloader install)" >&2; exit 1
     fi
     echo "The boot menu asks this only to edit an entry (e) or open GRUB's command line (c)."
     echo "  user:     golem"
@@ -41,7 +41,7 @@ let
 in
 {
   boot.loader.grub.subEntryOptions = "--class nixos --unrestricted";
-  environment.systemPackages = [ show ];
+  environment.systemPackages = [ (lib.hiPrio show) ];
 
   boot.loader.grub.extraInstallCommands = lib.mkAfter ''
     cfg=/boot/grub/grub.cfg

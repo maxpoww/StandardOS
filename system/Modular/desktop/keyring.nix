@@ -10,7 +10,7 @@
 # Its "login" keyring is locked with the owner's password, and the place that
 # password is typed is THE LOGIN: greetd starts the desktop with none typed
 # (desktop/greeter.nix) and the lock screen is the desktop's first screen
-# (golem-lock-screen --login, home/idle.nix). So:
+# (lock --login, home/idle.nix). So:
 #   - hyprlock's PAM starts the daemon WITH the password (auto_start), or
 #     unlocks the one already running; the first time it makes the login
 #     keyring with it. Only a password the system ACCEPTED gets there: in
@@ -19,7 +19,7 @@
 #     right password a second later could no longer open it (the VM,
 #     2026-10-28). So the password is checked first and a wrong one ends the
 #     attempt (requisite);
-#   - golem-lock-screen, once the lock is gone, completes the daemon's start
+#   - lock, once the lock is gone, completes the daemon's start
 #     (`--start`: its Secret Service on the bus, its certificates). A daemon
 #     started this way waits two minutes for that, then exits.
 # Nothing may start the daemon BEFORE that password (the VM, 2026-10-28):
@@ -63,5 +63,5 @@ in
   services.gnome.gcr-ssh-agent.enable = false;
   environment.etc = lib.genAttrs
     [ "xdg/autostart/gnome-keyring-pkcs11.desktop" "xdg/autostart/gnome-keyring-secrets.desktop" ]
-    (f: { text = hidden "GNOME Keyring (started by golem-lock-screen)"; });
+    (f: { text = hidden "GNOME Keyring (started by lock)"; });
 }

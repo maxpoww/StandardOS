@@ -10,7 +10,7 @@ local Suspend = G.Suspend
 -- session; home/idle.nix). `locked`: it also works on a locked session, so if
 -- the lock screen ever dies (the session stays locked, frozen on its last
 -- frame), Super+L brings a live one back (allow_session_lock_restore, standard/misc.lua).
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("golem-lock-screen"), { locked = true })
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("lock"), { locked = true })
 -- (While something dictated is being written out, Escape cancels it — the
 -- dock binds the bare key for that long and raises `golem_dictating`. A hand
 -- that has not let go of Super yet presses THIS key instead: it cancels too,

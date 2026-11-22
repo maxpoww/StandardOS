@@ -10,9 +10,9 @@ directory.
 | `default.nix` | `mkMachine` (`lib.standard.machine`): `dir → { system; nixosConfigurations; }`. The desktop's composition with the machine's files read from `dir`, the facts and lists read as data, the chooser run at evaluation. Also `.layoutModules profile`: the layout's own leaves, for the medium's baked systems (flake.nix). |
 | `../../machine.nix` | **What a machine's `flake.nix` calls** (`import ./standard/machine.nix ./.`). ⚠ Never move it. |
 | `from-lock.nix` | Standard evaluated with the pins of its OWN `flake.lock`, no flake around it: why a machine's flake has no inputs (one pin file, the one an update moves). |
-| `layout.nix` | The leaf every such machine gets: no checkout in a home (`standard.flakeDir = null` switches off the seal and all that existed for it), the folder kept with each generation (`/etc/golem/machine`), and the commands `rebuild-golem`, `golem-update` (the new version merged into root's copy, this machine's edits kept, built from a root-only try first), `golem-recover`, `golem-status`, `golem-machine-checkout`. |
-| `update.nix` | The nightly update: `golem-update --nightly` under the unit names of the old layout (`golem-autoupdate`, `golem-update-now`), the notices, the boot-menu check. |
-| `first-boot.nix` | The one build after an install (`golem-update --converge`), only where the installer left `/var/lib/golem/first-boot.pending`. |
+| `layout.nix` | The leaf every such machine gets: no checkout in a home (`standard.flakeDir = null` switches off the seal and all that existed for it), the folder kept with each generation (`/etc/golem/machine`), and the commands `rebuild`, `update` (the new version merged into root's copy, this machine's edits kept, built from a root-only try first), `recover`, `status`, `golem-machine-checkout`. |
+| `update.nix` | The nightly update: `update --nightly` under the unit names of the old layout (`golem-autoupdate`, `golem-update-now`), the notices, the boot-menu check. |
+| `first-boot.nix` | The one build after an install (`update --converge`), only where the installer left `/var/lib/golem/first-boot.pending`. |
 | `apps.nix` | The dock's installs: the owner's `packages.list` (data) → `machine/apps.list`, built from a root-only try first. |
 | `answers.nix` | The post-install answers → `machine/answers.list`, the same way. (The asking is `../postinstall.nix`.) |
 | `lists.nix` | Readers for `machine/*.list`: text in, one name a line, every name looked up — never imported. |

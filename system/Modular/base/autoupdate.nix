@@ -22,7 +22,7 @@
 #    mutate the lock in place, which would fight the seal). We rebuild ONLY
 #    after a clean `git pull --ff-only`; a tree that cannot fast-forward
 #    (local commits or a dirty checkout) is the OWNER's — we leave it on its
-#    current generation and let them drive rebuild-golem + bless. After the
+#    current generation and let them drive rebuild + bless. After the
 #    fast-forward, golem-seal-heal checks every changed file against root's
 #    OWN fetch of upstream and re-seals only upstream's code; a tree with
 #    anything else in it is not built (2026-11-12: until then this re-sealed
@@ -309,7 +309,7 @@ lib.mkIf (config.standard.flakeDir != null) {
       # (seen on the first real pull, 2026-09-30).
       if [ "$pull" = 1 ]; then
         if ! runuser -u "$owner" -- git -C "$dir" pull --ff-only --quiet; then
-          echo "golem-autoupdate: seed cannot fast-forward (local commits?) — leaving the current generation; run rebuild-golem yourself." >&2
+          echo "golem-autoupdate: seed cannot fast-forward (local commits?) — leaving the current generation; run rebuild yourself." >&2
           if [ -n "$heldpin" ]; then   # leave the tree exactly as we found it
             runuser -u "$owner" -- ${ownerPut} "$dir/$pin" < "$heldpin" || true
             runuser -u "$owner" -- git -C "$dir" add "$pin" || true; rm -f "$heldpin"
@@ -361,10 +361,10 @@ lib.mkIf (config.standard.flakeDir != null) {
       #    running as the owner could commit to ~/Golem, start
       #    golem-update-now (no password) and have root build its commit — the
       #    security study's road 2. A change nobody approved stays the
-      #    owner's: rebuild-golem builds it with their password.
+      #    owner's: rebuild builds it with their password.
       if ! ${config.standard.seal.check}/bin/golem-seal-check >/dev/null 2>&1 \
          && ! ${config.standard.seal.heal}/bin/golem-seal-heal; then
-        echo "golem-autoupdate: $dir holds changes nobody approved — not building them as root. Approve them with rebuild-golem (it asks for the password), or put Standard's files back." >&2
+        echo "golem-autoupdate: $dir holds changes nobody approved — not building them as root. Approve them with rebuild (it asks for the password), or put Standard's files back." >&2
         exit 1
       fi
       # Then stage the new generation for the next reboot — built from root's
@@ -388,7 +388,7 @@ lib.mkIf (config.standard.flakeDir != null) {
         # no other rebuild (a dock install) builds the new version without
         # its pieces meanwhile; the next run pulls it again.
         echo "golem-autoupdate: GitHub could not be reached for $after's published pieces — nothing compiled, trying again in an hour" >&2
-        ${config.standard.recover}/bin/golem-recover /nix/var/nix/profiles/system || true
+        ${config.standard.recover}/bin/recover /nix/var/nix/profiles/system || true
         # "Update now" stays asked for the hour's retry (not its wave).
         if [ "$asked_now" = 1 ]; then touch /run/golem-update-now; fi
         exit 75
@@ -399,7 +399,7 @@ lib.mkIf (config.standard.flakeDir != null) {
         # what built the newest system (base/recover.nix). The next run tries
         # upstream again (a download that broke is not a broken version).
         echo "golem-autoupdate: $after does not build — putting the source back to what built this machine's newest system" >&2
-        ${config.standard.recover}/bin/golem-recover /nix/var/nix/profiles/system || true
+        ${config.standard.recover}/bin/recover /nix/var/nix/profiles/system || true
         exit 1
       fi
       # The wave's clock stops only once the new version is built: a build

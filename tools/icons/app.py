@@ -3,7 +3,7 @@
 the folder symbol"): Standard's folder with a folder engraved on it. On the dock
 its launcher draws it itself and two folders come out from behind it on hover
 (waverunner's files_icon.rs). Written into the theme's apps/ in the theme's
-TONE (GOLEM_ICON_TONE): silver, or GRAPHITE for Golem-Dark — the dock's own
+TONE (GOLEM_ICON_TONE): silver, or GRAPHITE for Standard-Dark — the dock's own
 drawing turns graphite in the dark look, and everything that takes the icon
 from the theme (fast launch, the Apps grid, notifications) showed silver
 beside it (Max, 2026-10-15). build-theme.sh runs it once a tone.

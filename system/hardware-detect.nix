@@ -403,7 +403,7 @@
         done
 
         # ── Ambient light sensor → auto brightness ──────────────────────
-        # golem-autobrightness reads an iio `in_illuminance_*`. Three legs,
+        # autobrightness reads an iio `in_illuminance_*`. Three legs,
         # any one convicts (the bluetooth lesson: one path can be late): the
         # iio attribute itself, the sensor hub's ambient-light function
         # (HID usage 0x200041 — present as soon as the hub enumerates, before

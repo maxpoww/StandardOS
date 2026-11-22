@@ -75,10 +75,10 @@ let
       nix-env -p "$profiles/system" --switch-generation "$target"
       "$profiles/system/bin/switch-to-configuration" boot
       # The source follows: code AND machine layer exactly as they built the
-      # version we go back to, so the machine can rebuild again (golem-recover,
+      # version we go back to, so the machine can rebuild again (recover,
       # base/recover.nix).
-      ${config.standard.recover}/bin/golem-recover "$profiles/system" \
-        || echo "golem-rollback: golem-recover could not reset the source (it stays where it is)" >&2
+      ${config.standard.recover}/bin/recover "$profiles/system" \
+        || echo "golem-rollback: recover could not reset the source (it stays where it is)" >&2
       install -d -m 755 "$(dirname ${note})"
       printf 'from=%s\nto=%s\nat=%s\nwhy=%s\n' "''${bad:-unknown}" "''${target_rev:-unknown}" "$(date -Is)" "$why" > ${note}
       chmod 644 ${note}

@@ -31,7 +31,7 @@ What follows from it:
 
 - **A manual change has no place.** `sudo nixos-rebuild switch` answers
   "nixos-config not found". The real way (edit `~/Golem/hosts/target/machine.nix`,
-  run `rebuild-golem`, approve the seal) is known to nobody who learned NixOS
+  run `rebuild`, approve the seal) is known to nobody who learned NixOS
   anywhere else.
 - **Root builds what any program can write.** Everything in `~/Golem` is
   writable by every program the owner runs, and root builds the system from
@@ -164,7 +164,7 @@ What makes that safe to live with:
   *input*, Standard would have been locked twice — Nix copies an input's pins
   into the outer lock once and never looks again — and after a pull the
   machine would have built the new Standard with the old NixOS (measured).
-- **An update keeps your edits.** `golem-update` is a three-way merge of the
+- **An update keeps your edits.** `update` is a three-way merge of the
   files as they are with the new version, against the version they started
   from. Where you and the new version changed the same lines, Standard's wins
   and your file is set aside in `/var/lib/golem/local-edits/<when>/` — never
@@ -176,9 +176,9 @@ What makes that safe to live with:
 - **Never backwards.** If the branch a machine follows is behind what the
   machine has, nothing is taken from it.
 - **Going back.** Every generation keeps the folder it was built from, Standard
-  with your edits included; `golem-recover` puts those files back when the
+  with your edits included; `recover` puts those files back when the
   machine goes back a version.
-- **What you changed is one command away:** `sudo golem-status`, or plain
+- **What you changed is one command away:** `sudo status`, or plain
   `git status` / `git diff` in the folder.
 
 The other way to change one of Standard's modules still works and touches
@@ -203,15 +203,15 @@ its `~/Golem` checkout).
 
 | You want to… | You do |
 |---|---|
-| change something by hand | `sudo nano /etc/nixos/configuration.nix`, then `sudo nixos-rebuild switch` (or `rebuild-golem`: the same, behind Standard's rebuild lock) |
+| change something by hand | `sudo nano /etc/nixos/configuration.nix`, then `sudo nixos-rebuild switch` (or `rebuild`: the same, behind Standard's rebuild lock) |
 | add something of your own that deserves a file | drop `/etc/nixos/modules/printer.nix`, rebuild |
 | switch a whole module on by hand | `standard.modules.gaming.enable = true;` in `configuration.nix`, or the line `gaming` in `machine/modules.list` (what the dock's Modules page will write) |
 | take one program of a module, or refuse one | `standard.modules.gaming.lutris.enable = true;` · `standard.modules.gaming.steam.enable = false;` |
 | add a key or a window rule of your own to Hyprland | `~/.config/hypr/user.lua` (yours, loaded after Standard's; `hyprctl reload` the first time, from then on saving it reloads) — or `standard.home.hyprlandExtra` in `configuration.nix` for the whole machine |
 | see what Standard does for this hardware, and why | `cat /etc/golem/layout.json`; the modules themselves are in `/etc/nixos/standard/system/` |
-| read or change one of Standard's own files | `/etc/nixos/standard/…` (root's copy: edit, rebuild; `sudo golem-status` says what this computer changed) |
-| update now | `sudo golem-update` (the nightly update does it for you; `--now` switches at once) |
-| go back a version | Controls → Updates → Go back (Standard's files go back with the system: `golem-recover`) |
+| read or change one of Standard's own files | `/etc/nixos/standard/…` (root's copy: edit, rebuild; `sudo status` says what this computer changed) |
+| update now | `sudo update` (the nightly update does it for you; `--now` switches at once) |
+| go back a version | Controls → Updates → Go back (Standard's files go back with the system: `recover`) |
 | reinstall and keep the machine as it was | keep `/etc/nixos` (it is small, and holds no secret) |
 
 ## 5. The layers, from the bottom
@@ -279,7 +279,7 @@ session).
 | | What | State |
 |---|---|---|
 | **1** | The layout itself: `lib.standard.machine` composes a machine from its folder; the `/etc/nixos` template and `golem-machine-scaffold`; `golem-relocate`; facts and lists as data; the chooser at evaluation; the check `machine-layout`. Hyprland in Lua modules behind one link; the 25 app modules, switched on from `machine/modules.list`; the home layer one file a concern. | **on `main`** (19-Nov) |
-| **2** | Standard as root's editable copy (`machine.nix`, `from-lock.nix`, `golem-machine-checkout`); the update that keeps the edits (`golem-update`, `golem-recover`, `golem-status`) and its nightly service, waves and held versions; the dock's installs into `machine/apps.list`; the first-boot build. | **on `main`** (20-Nov): the checks `machine-layout`, `machine-update` (the update driven on a made-up upstream, 101 assertions) and `idle-suspend`, and real installs — see below |
+| **2** | Standard as root's editable copy (`machine.nix`, `from-lock.nix`, `golem-machine-checkout`); the update that keeps the edits (`update`, `recover`, `status`) and its nightly service, waves and held versions; the dock's installs into `machine/apps.list`; the first-boot build. | **on `main`** (20-Nov): the checks `machine-layout`, `machine-update` (the update driven on a made-up upstream, 101 assertions) and `idle-suspend`, and real installs — see below |
 | **3** | The installer writes this layout: the medium's baked systems are systems of the layout; `golem-install` gathers the machine's files in a root-only stage, makes `/etc/nixos` from them and Standard beside it, and asks for the first-boot build. `standard-desktop` and `hosts/target` stay only for machines installed before. | **on `main`** (20-Nov): installed in a VM from the medium four times, the last from the commit that was merged — see below |
 | **4** | Machines installed before are REINSTALLED from the first medium that writes the layout (Max, 2026-11-19), the lab's first. `golem-relocate` stays as a tool, not as a migration. | the lab's MacBook runs the layout since 20-Nov (moved in place with `golem-relocate` to try it on real hardware; its reinstall from the medium is next). The others wait for the first medium |
 | **5** | The repository's rename (§6) and the older profile's retirement. | after stage 3 (Max: yes) |
@@ -315,14 +315,14 @@ first session.
   running session (same compositor, no configuration error), the edits
   still there and built in, nothing set aside.
 - **The browser's own update** (Seam 160.0 → 160.0.1) wrote its pin into
-  root's copy and rebuilt from the folder; `golem-status` shows it for what
+  root's copy and rebuilt from the folder; `status` shows it for what
   it is.
 - **An install from the dock** (the owner's list, with two hostile lines in
   it): the two names written to `machine/apps.list`, the programs in the
   owner's profile, the hostile lines refused.
 - **A post-install answer**: the one valid answer in `machine/answers.list`.
 - **Going back** to the files that built an earlier generation, and forward
-  again (`golem-recover`).
+  again (`recover`).
 
 On the day it was merged, from the commit that was merged:
 
@@ -343,7 +343,7 @@ On the day it was merged, from the commit that was merged:
   own folder in about a minute and computes the system the build machine
   built for it; the hardware modules chosen from its facts are the ten it
   had; it restarts into the layout in 70 s with its desktop, Wi-Fi and no
-  failed unit; `golem-update` says it is ahead of `stable` and takes
+  failed unit; `update` says it is ahead of `stable` and takes
   nothing; a file dropped in `/etc/nixos/modules/` and a plain
   `nixos-rebuild switch` take 40 s under the running session; an app from
   the dock, 109 s.

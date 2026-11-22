@@ -276,7 +276,7 @@ let
       # … and into the checkout, as the owner: the record of what was
       # answered, and what the next unattended build (the nightly update, an
       # app install) carries through the seal's data channels. Tracked, so a
-      # flake reading the checkout (rebuild-golem) sees it too.
+      # flake reading the checkout (rebuild) sees it too.
       if ! put_as_owner "$work/generated" "$gen"; then
         msg="Standard could not write the answer into the system folder ($gen)."
         write_status "done" false "$(printf '%s' "$msg" | jq -Rs .)"

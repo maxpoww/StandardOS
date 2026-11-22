@@ -22,7 +22,7 @@
 # `--tree` is the installer's case: its medium carries Standard's FILES, not
 # their history. The folder is copied as it is and git is only told where the
 # upstream is; the history arrives with the first update, which finds the
-# files' commit in it by .golem-rev (golem-update, system/machine/layout.nix).
+# files' commit in it by .golem-rev (update, system/machine/layout.nix).
 #
 # .golem-rev (beside the files, never tracked) is the upstream commit the
 # files are made of: what the system says it was built from, and where the

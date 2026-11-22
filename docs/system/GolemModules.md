@@ -68,7 +68,7 @@ not reconstructed per install the way a forum answer is.
 | The declarative-install pipeline: user-writable selection file → `systemd.path` watch → root validates → regenerates a tracked Nix file → `nixos-rebuild switch` → snapshot last-good on success / restore on failure → status JSON back to the UI | `system/waverunner-apply.nix` | built — today it only ever emits a flat `home.packages` list; §6 generalizes it to flip option booleans instead |
 | "Clean fresh install" is already policy, not aspiration: `standard.lean` strips the launcher-installed list and the non-essential CURATE set for the ISO; an installed machine starts from nothing and grows only through user action | `system/configuration.nix` (`standard.lean`) | built |
 | The UI half already ships: waverunner's **Install section**, described in `apps.md` as `Software center — ✔ shipped`, drives `waverunner-apply.nix` today by writing `packages.list` | `apps.md` (BUILD table), `~/launcher` (out of scope for this repo — see §9) | built, single-tier |
-| Rebuild-vs-reboot honesty: `rebuild-golem` already diagnoses "activated == latest" vs "REBOOT REQUIRED" by comparing `/run/current-system`, the system profile and `/run/booted-system` | `system/configuration.nix` (`rebuild-golem` script) | built — §7 reuses this signal for modules that need more than a rebuild |
+| Rebuild-vs-reboot honesty: `rebuild` already diagnoses "activated == latest" vs "REBOOT REQUIRED" by comparing `/run/current-system`, the system profile and `/run/booted-system` | `system/configuration.nix` (`rebuild` script) | built — §7 reuses this signal for modules that need more than a rebuild |
 
 ## 4. The category catalog
 
@@ -262,7 +262,7 @@ removal.
 **To test (Max, on the real machine):** add
 `standard.modules.music-production.enable = true;` to the `golem` host's
 module list in `flake.nix` (next to `standard.flakeDir`), then
-`rebuild-golem`. Whatever the organ actually needs beyond "plug in a
+`rebuild`. Whatever the organ actually needs beyond "plug in a
 class-compliant USB MIDI/audio device" — it should just work via ALSA/
 PipeWire without extra udev rules, but this is exactly the sentence real
 hardware gets to overrule.
@@ -327,11 +327,11 @@ Some modules need more than `nixos-rebuild switch` to be actually usable,
 and the status the UI shows must say so rather than declare victory early:
 
 - **Group membership** (`libvirtd`, `docker`, `wireshark`) only takes
-  effect on the next login — the existing `rebuild-golem` script's
+  effect on the next login — the existing `rebuild` script's
   activated-vs-booted check (§3) covers *kernel/reboot* drift; a parallel
   *groups-changed-since-last-login* check is new work, not a reuse.
 - **Reboot required** (kernel modules, bootloader-relevant changes) —
-  `rebuild-golem` already detects and prints this; the module UI needs to
+  `rebuild` already detects and prints this; the module UI needs to
   surface it as a real status, not swallow it into a generic "done."
 - **Hardware that can't back the choice** (§4.1/4.2/4.8's gates) — belongs
   as a visible, honest caveat on the checkbox itself, before the user ever

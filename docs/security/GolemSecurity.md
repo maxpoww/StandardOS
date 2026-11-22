@@ -82,7 +82,7 @@ running as the owner reached root with no password.
    the whole tree. Its backup pin no longer sits in the checkout.
 
 The same rule now covers the two other places that blessed whatever they
-found: `golem-recover` (run by `golem-rollback`, which needs no password —
+found: `recover` (run by `golem-rollback`, which needs no password —
 rewritten git objects, then a reset, were sealed) and `golem-seed-adopt`
 (deleting `~/Golem/.git` made the next update re-adopt and seal an edited
 `machine.nix`). Both seal only through check or heal; recover vouches for
@@ -90,7 +90,7 @@ the machine layer by the system's own store copy
 (`GOLEM_SEAL_TRUSTED_MACHINE`).
 
 A change nobody approved now waits: the update fails (the 7-day notice
-says so) until `rebuild-golem` builds it with the owner's password.
+says so) until `rebuild` builds it with the owner's password.
 
 Still open after 1c: the race below (closed in 1d), `golem-rollback` and
 `golem-clean-system` can be started without a password (a downgrade or a
@@ -111,7 +111,7 @@ Max approved five items from the next round, the ones nobody sees.
    which the flake reads for `system.configurationRevision` when it is built
    from a plain directory. `golem-seal-heal` and `golem-bless` hash root's copy
    and keep that same copy as the snapshot, so the seal and what root builds
-   are the same bytes. `rebuild-golem` runs `golem-seal-approve`: build a copy,
+   are the same bytes. `rebuild` runs `golem-seal-approve`: build a copy,
    then seal that copy, so a file changed during the build is never approved
    unbuilt. The install helper and Seam's lane no longer write through names a
    link could be planted at (`apps.nix.new`, the pin's restore).
@@ -131,7 +131,7 @@ Max approved five items from the next round, the ones nobody sees.
 5. **The boot menu asks a password only to be changed.** `e` and GRUB's command
    line ask for the user `golem` and the machine's boot password: random, made
    at the first bootloader install, root-only in `/var/lib/golem/secrets`
-   (`sudo golem-boot-password` shows it). Every entry and the Previous Versions
+   (`sudo boot-password` shows it). Every entry and the Previous Versions
    submenu boot without it. Put into `grub.cfg` after the generator (like the
    menu's words), because NixOS's `boot.loader.grub.users` dies on a missing
    file before anything of ours runs, which would have failed every machine's
@@ -140,7 +140,7 @@ Max approved five items from the next round, the ones nobody sees.
    it"). The session keeper, or Hyprland's own watchdog, used to start a
    crashed desktop again open: a crash caused at the lock screen handed over
    the desktop. Now the second start of the desktop in a boot runs the lock
-   screen first thing, as the compositor's child (`golem-lock-screen --login`,
+   screen first thing, as the compositor's child (`lock --login`,
    a marker in the runtime dir), whatever the login setting says. The first
    start of a boot shows the lock screen as the login (branch login-live),
    unless `standard.home.loginLock.enable` is off (disk encryption stays an

@@ -111,11 +111,16 @@ after all its machines. What makes two devices the same Golem: an identity
 the owner creates at the start and adds each new device to, with their own
 confirmation.
 
-**The names follow the model.** What is a tool is Standard:
-`standard-update`, `standard-recover`, Standard Files, Standard Dark,
-Standard PC. What belongs to the being is Golem: its jobs (the nightly
-update is Golem using `standard-update`), its memory (`/var/lib/golem`), its
-diary, its voice (the notices signed "Golem").
+**The names follow the model.** The tools are Standard, and they do not
+need to say it: they ARE the standard ones. Its commands are plain words —
+`update`, `recover`, `rebuild`, `status`, `caffeine`, `screenshot`, `lock` —
+the command you would guess, with no brand in front (Max, 2026-11-22: "que
+los comandos sean comandos standard, no que tengan la palabra standard").
+The brand goes where a name is shown, not typed: Standard Files, the
+Standard and Standard-Dark looks, Standard PC. What belongs to the being is
+Golem: its jobs (the nightly update is Golem running `update`, the same
+command you can type), its memory (`/var/lib/golem`), its diary, its voice
+(the notices signed "Golem").
 
 **How Golem is seen — never a Clippy.** Golem is not a chat and not a face
 that talks. It is a presence with a page of its own:

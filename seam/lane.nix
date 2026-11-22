@@ -21,7 +21,7 @@ let
   #  - Standard, the /etc/nixos layout (system/machine): root's own copy of Standard
   #    (<folder>/standard). The pin is written there, by root, and what is rebuilt is
   #    the machine's folder. No seal: nothing an owner's program can write is in it.
-  #    (An update of Standard keeps whichever pin is NEWER: golem-update.)
+  #    (An update of Standard keeps whichever pin is NEWER: update.)
   #  - dev box (channel /etc/nixos): this directory itself, plain `nixos-rebuild`.
   flakeDir = lib.attrByPath [ "standard" "flakeDir" ] null config;
   flakeAttr = lib.attrByPath [ "standard" "flakeAttr" ] null config;

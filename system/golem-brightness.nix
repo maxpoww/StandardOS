@@ -1,4 +1,4 @@
-# golem-brightness — the backlight that follows the panel, not a hardcoded name.
+# brightness — the backlight that follows the panel, not a hardcoded name.
 #
 # Max hit this for years: brightness worked with `intel_backlight`, then a stint
 # where he had to use `nvidia_0`, then back — and swapped the name by hand in
@@ -12,7 +12,7 @@
 #
 # So Standard doesn't store a name — it FINDS the backlight tied to the connected
 # internal panel at press time and drives that. Adapts to the mux with zero config,
-# on any machine. The brightness keys call `golem-brightness` instead of
+# on any machine. The brightness keys call `brightness` instead of
 # `brightnessctl -d <guess>`. Permissions come from the owner being in `video` +
 # brightnessctl's own udev rule (already set) — no setuid, no root.
 { config, lib, pkgs, ... }:
@@ -45,22 +45,22 @@ let
       }
   '';
 
-  golem-brightness = pkgs.writeShellApplication {
-    name = "golem-brightness";
+  brightnessTool = pkgs.writeShellApplication {
+    name = "brightness";
     runtimeInputs = [ pkgs.brightnessctl pkgs.coreutils ];
     # shellcheck: the /sys globs are intentional and guarded.
     text = ''
 ${pick}
-      dev=$(pick) || { echo "golem-brightness: no backlight device found" >&2; exit 1; }
+      dev=$(pick) || { echo "brightness: no backlight device found" >&2; exit 1; }
       # -e4 exponential curve — Max's tuned feel. By hand it goes all the way
       # to 0, the screen off (Max, 2026-10-22: "i want to be able to turn my
-      # screen off"); only the auto keeps its 4 % floor (golem-autobrightness,
+      # screen off"); only the auto keeps its 4 % floor (autobrightness,
       # which leaves a screen at 0 alone).
       exec brightnessctl -e4 -n0 -d "$dev" "$@"
     '';
   };
 
-  # golem-autobrightness — the panel follows the room's light, where the machine
+  # autobrightness — the panel follows the room's light, where the machine
   # has an ambient light sensor (an iio `in_illuminance_*`: the HID sensor hub of
   # most 2020+ laptops, ACPI ALS). No sensor or no backlight → it exits at start
   # and nothing runs.
@@ -103,12 +103,12 @@ ${pick}
   # and leaves at every login (Max, 2026-10-10: "Standard [has] to find out and
   # set up so [it] is not running on machines with no sensor").
   #
-  # `golem-autobrightness off|on|status|reset`: off is a file
+  # `autobrightness off|on|status|reset`: off is a file
   # (~/.config/golem/autobrightness-off, as caffeine), so it survives a reboot.
   # Pure bash arithmetic on /sys, one sensor read every 2 s (the HID hub takes
   # ~0.6 s to answer), no child process in the loop.
-  golem-autobrightness = pkgs.writeShellApplication {
-    name = "golem-autobrightness";
+  autobrightness = pkgs.writeShellApplication {
+    name = "autobrightness";
     runtimeInputs = [ pkgs.coreutils pkgs.systemd ];
     text = ''
       off_file="$HOME/.config/golem/autobrightness-off"
@@ -219,7 +219,7 @@ ${pick}
           fi
           rm -f "$off_file"
           systemctl --user restart golem-autobrightness.service
-          echo "auto brightness ON: the screen follows the room's light; the brightness keys still work. Undo: golem-autobrightness off"
+          echo "auto brightness ON: the screen follows the room's light; the brightness keys still work. Undo: autobrightness off"
           exit 0 ;;
         off)
           mkdir -p "$(dirname "$off_file")" && touch "$off_file"
@@ -247,7 +247,7 @@ ${pick}
         status)
           if systemctl --user is-active --quiet golem-autobrightness.service; then echo on; else echo off; fi
           exit 0 ;;
-        *) echo "usage: golem-autobrightness on|off|status|reset" >&2; exit 2 ;;
+        *) echo "usage: autobrightness on|off|status|reset" >&2; exit 2 ;;
       esac
 
       # --- the daemon -------------------------------------------------------
@@ -321,11 +321,11 @@ ${pick}
       tries=0
       until find_sensor; do
         tries=$(( tries + 1 ))
-        if (( tries > 5 )); then echo "golem-autobrightness: no ambient light sensor on this machine"; exit 0; fi
+        if (( tries > 5 )); then echo "autobrightness: no ambient light sensor on this machine"; exit 0; fi
         nap 3
       done
-      find_backlight || { echo "golem-autobrightness: no backlight on this machine"; exit 0; }
-      [ -w "$bl/brightness" ] || { echo "golem-autobrightness: $bl/brightness is not writable (owner not in video?)" >&2; exit 1; }
+      find_backlight || { echo "autobrightness: no backlight on this machine"; exit 0; }
+      [ -w "$bl/brightness" ] || { echo "autobrightness: $bl/brightness is not writable (owner not in video?)" >&2; exit 1; }
 
       # The owner's choices: "light offset" lines, the light (lg) at which the
       # keys were used and how far from the curve, sorted by light, one per
@@ -401,7 +401,7 @@ ${pick}
             printf '%s\n' "$klevel" > "$state-kbd"
           fi
           kheld=$kwant kwritten=$kcur
-          echo "golem-autobrightness: owner set the keyboard light to $kcur/$kmax"
+          echo "autobrightness: owner set the keyboard light to $kcur/$kmax"
           return 0
         fi
         kwritten=$kcur
@@ -415,11 +415,11 @@ ${pick}
         if (( (kcur > 0) != (to > 0) )); then
           echo "$to" > "$kbd/brightness" 2>/dev/null || true
           kwritten=$to
-          echo "golem-autobrightness: $(( mlux / 1000 )) lx → keyboard light $to/$kmax"
+          echo "autobrightness: $(( mlux / 1000 )) lx → keyboard light $to/$kmax"
         fi
       }
 
-      echo "golem-autobrightness: sensor $sensor, backlight $bl (max $max), ''${#plg[@]} remembered"
+      echo "autobrightness: sensor $sensor, backlight $bl (max $max), ''${#plg[@]} remembered"
       # first: the start, where the screen goes to the room without waiting.
       # held: the light (lg) at which the owner set a level with the keys.
       first=1 held="" prev="" lo=0 hi=0 down=0 last=$EPOCHSECONDS
@@ -467,7 +467,7 @@ ${pick}
           curve "$light"
           learn "$light" $(( p10 - tgt ))
           written=$actual held=$light down=0
-          echo "golem-autobrightness: owner set $(( p10 / 10 ))% at $(( mlux / 1000 )) lx"
+          echo "autobrightness: owner set $(( p10 / 10 ))% at $(( mlux / 1000 )) lx"
           nap 2; continue
         fi
         written=$actual
@@ -485,7 +485,7 @@ ${pick}
           first=0
           if (( d >= 10 || d <= -10 )); then
             fade "$p10" "$tgt" 0.016
-            echo "golem-autobrightness: $(( mlux / 1000 )) lx → $(( tgt / 10 ))% (start)"
+            echo "autobrightness: $(( mlux / 1000 )) lx → $(( tgt / 10 ))% (start)"
           fi
           nap 2; continue
         fi
@@ -497,13 +497,13 @@ ${pick}
         if (( du >= 50 )) || (( tu == 1000 && du > 0 )); then
           fade "$p10" "$tu" 0.016
           down=0
-          echo "golem-autobrightness: $(( mlux / 1000 )) lx → $(( tu / 10 ))%"
+          echo "autobrightness: $(( mlux / 1000 )) lx → $(( tu / 10 ))%"
         elif (( dd <= -50 )); then
           down=$(( down + 1 ))
           if (( down >= 3 )); then
             fade "$p10" "$td" 0.033
             down=0
-            echo "golem-autobrightness: $(( mlux / 1000 )) lx → $(( td / 10 ))%"
+            echo "autobrightness: $(( mlux / 1000 )) lx → $(( td / 10 ))%"
           fi
         else
           down=0
@@ -516,8 +516,8 @@ ${pick}
   lightSensor = config.standard.hardware.lightSensor or false;
 in
 {
-  environment.systemPackages = [ golem-brightness pkgs.brightnessctl ]
-    ++ lib.optional lightSensor golem-autobrightness;
+  environment.systemPackages = [ (lib.hiPrio brightnessTool) pkgs.brightnessctl ]
+    ++ lib.optional lightSensor (lib.hiPrio autobrightness);
 
   # On by default where the census found a sensor, absent everywhere else.
   # Never for the greeter's own session; off = the file, see above.
@@ -531,7 +531,7 @@ in
       ConditionUser = "!@system";
     };
     serviceConfig = {
-      ExecStart = "${golem-autobrightness}/bin/golem-autobrightness run";
+      ExecStart = "${autobrightness}/bin/autobrightness run";
       Restart = "on-failure";
       RestartSec = 5;
     };

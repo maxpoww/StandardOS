@@ -880,7 +880,7 @@ each is discharged **inside its own block**, in writing, against the real tree:
   loop built deliberately in its image). `boot` rather than `switch` is the safe
   half: nothing about the running system changes, and the previous generation stays
   in the boot menu. Where that unit is absent the action does not exist — on the
-  live ISO by design (`hosts/iso.nix`: no flake checkout, so `rebuild-golem` is
+  live ISO by design (`hosts/iso.nix`: no flake checkout, so `rebuild` is
   absent), so it never speaks there.
 - **Refusal:** not now = **this generation is finished**, the escalation clause hunt
   #1 §1.5 made binding. At most one utterance per pending generation, ever; a

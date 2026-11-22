@@ -52,7 +52,7 @@
     default = null;
     description = ''
       Local checkout of the Standard flake on this machine. Enables the
-      waverunner declarative-install apply service and points rebuild-golem
+      waverunner declarative-install apply service and points rebuild
       at it. null (a machine without a checkout) disables both.
     '';
   };
@@ -406,7 +406,7 @@
       syntaxHighlighting.enable = true;
     };
 
-    # waverunner-apply and rebuild-golem evaluate the user-owned checkout
+    # waverunner-apply and rebuild evaluate the user-owned checkout
     # AS ROOT; git's ownership guard (CVE-2022-24765) and nix's libgit2
     # copy of it must both be told that's safe. Both read /etc/gitconfig —
     # the only level libgit2 honors (never -c, never env).
@@ -491,10 +491,10 @@
       # Stopgap kit (die when their Arc-2 OPTIONS modules ship):
       pavucontrol           # audio GUI
       networkmanagerapplet  # network GUI (nm-connection-editor)
-      # brightnessctl + golem-brightness come from ./golem-brightness.nix now
+      # brightnessctl + brightness come from ./golem-brightness.nix now
       # (system-wide, not the user's launcher list). The keys call the latter.
     ] ++ lib.optional (config.standard.flakeDir != null)
-      (pkgs.writeShellScriptBin "rebuild-golem" ''
+      (pkgs.writeShellScriptBin "rebuild" ''
         set -euo pipefail
         sudo golem-rebuild switch --flake "${config.standard.flakeDir}#${config.standard.flakeAttr}" "$@"
       # Built and switched with sudo: that IS the owner's consent to what is

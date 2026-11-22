@@ -37,7 +37,7 @@ telemetry.
 | `builder.nix` | On the build machine: the `golem-lane` command + its daily timer |
 | `client.nix` | On every install: the cache key, the per-version cache, the wave |
 | `../system/Modular/base/autoupdate.nix` | The daily update: own moment (or right after power-on), wave, `stable`, pull, rebuild `boot` |
-| `../system/golem-seal.nix` (`golem-rebuild`) | Hands every rebuild its version's cache (nightly update, first boot, dock installs, `rebuild-golem`) |
+| `../system/golem-seal.nix` (`golem-rebuild`) | Hands every rebuild its version's cache (nightly update, first boot, dock installs, `rebuild`) |
 | `../system/Modular/base/seed.nix` | `standard.upstream.branch = "stable"` |
 | `../system/Modular/lab/lab-door.nix` | The lab is wave 0 |
 | `../system/Modular/effect-matrix.nix` | Asserts the client side (branch, key, timer, wave) |

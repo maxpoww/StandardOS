@@ -5,7 +5,7 @@
 # computer: its name, its owner, and anything you want different. Standard
 # never rewrites this file, and an update never touches it.
 #
-#   sudo nixos-rebuild switch     apply what you changed (or: rebuild-golem)
+#   sudo nixos-rebuild switch     apply what you changed (or: rebuild)
 #   ./modules/                    drop a .nix file there: it is part of the system
 #   ./standard/                      read Standard, copy from it (docs: ./standard/docs)
 #   man configuration.nix         every NixOS option

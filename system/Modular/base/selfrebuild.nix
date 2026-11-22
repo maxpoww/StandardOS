@@ -1,6 +1,6 @@
 # base/selfrebuild — the machine can grow, stage 0's load-bearing leaf.
 # Stage climbs happen by REBUILD from the seed (the constitution's rule
-# 5); this leaf is that ability: the rebuild-golem wrapper with its
+# 5); this leaf is that ability: the rebuild wrapper with its
 # drift check, and the git ownership grants root's rebuild needs to
 # read the owner's checkout. The seal (#56) rides beside it at the
 # composition level (golem-seal.nix, unchanged). Data-driven on
@@ -23,7 +23,7 @@
   environment.systemPackages = [
     pkgs.git
   ] ++ lib.optional (config.standard.flakeDir != null)
-    (pkgs.writeShellScriptBin "rebuild-golem" ''
+    (pkgs.writeShellScriptBin "rebuild" ''
       set -euo pipefail
       # Built and switched with sudo: that IS the owner's consent. Root copies
       # the checkout once, builds that copy and seals that same copy

@@ -1,8 +1,8 @@
-# golem-screenshot — a picture of the screen, kept and on the clipboard.
+# screenshot — a picture of the screen, kept and on the clipboard.
 #
-#   golem-screenshot region    drag a rectangle (Esc: nothing happens)
-#   golem-screenshot screen    the screen the keyboard is on, whole
-#   golem-screenshot window    the window the keyboard is in
+#   screenshot region    drag a rectangle (Esc: nothing happens)
+#   screenshot screen    the screen the keyboard is on, whole
+#   screenshot window    the window the keyboard is in
 #
 # Every shot does the same three things: a PNG in the Pictures folder's
 # Screenshots ("Screenshot 2026-11-16 14-03-21.png"), the same picture on the
@@ -12,7 +12,7 @@
 # there.
 #
 # The keys are in hyprland.lua (Print, Shift+Print, Alt+Print). The body of
-# the `golem-screenshot` command (screenshot.nix). golem-screenshot-test.sh,
+# the `screenshot` command (screenshot.nix). golem-screenshot-test.sh,
 # beside this, runs it against stand-ins for the screen and the clipboard.
 #
 # GOLEM_SHOT_NOW: the moment in the file's name, as `date -d` reads it (tests).
@@ -21,7 +21,7 @@ mode=${1:-region}
 case $mode in
   region | screen | window) ;;
   *)
-    echo "usage: golem-screenshot region|screen|window" >&2
+    echo "usage: screenshot region|screen|window" >&2
     exit 2
     ;;
 esac
@@ -29,7 +29,7 @@ esac
 say() { golem-say "$@"; }
 
 runtime=${XDG_RUNTIME_DIR:-/tmp}
-tmp=$(mktemp "$runtime/golem-screenshot.XXXXXX.png") || exit 1
+tmp=$(mktemp "$runtime/screenshot.XXXXXX.png") || exit 1
 trap 'rm -f "$tmp"' EXIT
 
 failed() {

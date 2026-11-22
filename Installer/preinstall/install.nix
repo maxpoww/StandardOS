@@ -1118,7 +1118,7 @@ pkgs.writeShellApplication {
     # imperative password + authorized_keys set here PERSIST on the generic
     # system — it is loginable on first boot, offline, with no rebuild. The
     # seed's machine.nix still carries the DECLARATIVE answers (owner,
-    # hostname, keys), so the first `rebuild-golem` makes them
+    # hostname, keys), so the first `rebuild` makes them
     # permanent AND swaps the generic hardware config for this box's measured
     # one. Harmless on the from-seed path (same values, re-applied). The
     # hostname stays the baked default until that first rebuild — cosmetic,

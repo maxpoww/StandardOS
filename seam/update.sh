@@ -122,10 +122,10 @@ flock 9
 # moved by upstream's own code (golem-seal-heal checks each changed file against root's
 # own fetch of upstream). Until then an unsealed checkout was rebuilt anyway: any program
 # running as the owner could edit flake.nix and have root build it at Firefox's next
-# release. A change nobody approved waits; rebuild-golem approves it with the password.
+# release. A change nobody approved waits; rebuild approves it with the password.
 if [ -n "${SEAM_SEAL_CHECK:-}" ] && ! "$SEAM_SEAL_CHECK" >/dev/null 2>&1 \
    && ! { [ -n "${SEAM_SEAL_HEAL:-}" ] && "$SEAM_SEAL_HEAL"; }; then
-  log "the checkout holds changes nobody approved — not rebuilding it as root; Seam $want waits until they are approved (rebuild-golem) or put back"
+  log "the checkout holds changes nobody approved — not rebuilding it as root; Seam $want waits until they are approved (rebuild) or put back"
   exit 1
 fi
 # The pin written below — ours, from Mozilla's signed SHA256SUMS — is sealed by itself

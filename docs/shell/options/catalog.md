@@ -207,7 +207,7 @@ activated), free RAM (pressure), reconnect wifi/bluetooth.
 **Offers → actions:**
 - Battery critical → Warning (live today); action: nothing to *do* but plug in.
 - Stale generation → **Reboot** (`systemctl reboot`) / not-activated → **re-run switch**
-  (`rebuild-golem`) **[cheap: spawn, gated to Standard]**.
+  (`rebuild`) **[cheap: spawn, gated to Standard]**.
 - Screen sharing live → Warning (live); action: stop share.
 **Module:** `system-health` (already half-built as providers; add actions).
 **Priority: HIGH** (signals all live; a couple of safe spawns turn warnings into fixes).
@@ -249,7 +249,7 @@ module = provider(ctx) -> [ Affordance { id, kind, title, detail, relevance,
 **Action vocabulary** (`AffordanceAction`, executed by the daemon):
 - `None` — pure information (today's affordances).
 - `Spawn { argv }` — run a program, fire-and-forget (playerctl, wpctl, brightnessctl,
-  git, grim, rebuild-golem, xdg-open). Covers the overwhelming majority of offers.
+  git, grim, rebuild, xdg-open). Covers the overwhelming majority of offers.
 - `HyprDispatch(cmd)` — a compositor dispatch (fullscreen, close) via the existing
   `hypr::` helpers.
 - `OpenUrl(url)` — `xdg-open` a URL (from the selection module).

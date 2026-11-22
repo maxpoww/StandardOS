@@ -9,7 +9,7 @@
 # answers and measured hardware are already in /etc/nixos; this builds them,
 # once, online and behind the owner's first session:
 #
-#   golem-update --converge     the newest Standard of the branch, merged into
+#   update --converge     the newest Standard of the branch, merged into
 #                               root's copy (/etc/nixos/standard), and this
 #                               machine's own system built from the folder —
 #                               even when there is no newer version
@@ -62,7 +62,7 @@ in
       set -euo pipefail   # a failed build must not reach the last line
       ${golemWaitOnline}/bin/golem-wait-online || exit 75
       echo "first-boot: building this machine's own system (its answers, its measured hardware)…"
-      golem-update --converge
+      update --converge
       rm -f ${lib.escapeShellArg pending}
       echo "first-boot: done; this machine's own system starts at the next restart."
     '';

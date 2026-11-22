@@ -1,5 +1,6 @@
 # legacy-names — THE OPTIONS BY THEIR OLD NAME, for machines installed before
-# the system was called StandardOS (2026-11-20).
+# the system was called StandardOS (2026-11-20); and the commands by theirs
+# (golem-update is update since 2026-11-22: old-command-names.nix).
 #
 # Their own files — hosts/target in an owner's checkout, the build machine's
 # /etc/nixos — were written when the options were `golem.…`: `golem.owner`,
@@ -30,4 +31,8 @@
   };
 
   config.standard = lib.mkAliasDefinitions options.golem;
+
+  # And the commands by their old name (golem-update, rebuild-golem…): a link
+  # to the tool's new name, wherever the new one is installed.
+  config.environment.extraSetup = import ./old-command-names.nix;
 }

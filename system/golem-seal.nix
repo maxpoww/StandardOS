@@ -164,7 +164,7 @@ let
 
   # ONE rebuild at a time, for every rebuilder Standard has: the dock's app
   # installs, post-install answers, first boot, the nightly update, Seam's
-  # update lane and the owner's rebuild-golem. switch-to-configuration takes
+  # update lane and the owner's rebuild. switch-to-configuration takes
   # its own lock WITHOUT waiting ("Could not acquire lock"), and by then
   # nixos-rebuild has already made the new generation the boot default — so
   # an app install that met the nightly update failed in the dock while the
@@ -308,7 +308,7 @@ let
       removed=$(comm -13 <(printf '%s\n' "$cur_paths") <(path_of < "$manifest" | sort))
       local_edits=()
       # A caller that just put back the machine layer from a system's OWN copy
-      # (golem-recover: /etc/golem/machine, in the store) names that copy: a
+      # (recover: /etc/golem/machine, in the store) names that copy: a
       # machine file equal to it is the system's, not an edit. Nothing else
       # can vouch for a file that is not upstream's.
       trusted=''${GOLEM_SEAL_TRUSTED_MACHINE:-}
@@ -513,7 +513,7 @@ let
     '';
   };
 
-  # golem-seal-approve ACTION [ARGS]: rebuild-golem, the owner's own build
+  # golem-seal-approve ACTION [ARGS]: rebuild, the owner's own build
   # with their password. It used to build ~/Golem and then bless whatever
   # ~/Golem held by the end — a file changed during the build was approved
   # without being built. Now root copies the checkout once, builds that

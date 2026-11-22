@@ -37,7 +37,7 @@ in
     # A lab testbed's flag (system/Modular/lab/lab-door.nix): only lab machines have it.
     ++ dropped "lab.nix";
 
-  # The installed-machine loop: waverunner-apply and rebuild-golem work
+  # The installed-machine loop: waverunner-apply and rebuild work
   # against the seeded checkout in the owner's home, and the machine
   # rebuilds itself as what it actually runs (hosts/vm.nix is the shape).
   standard.flakeDir = lib.mkDefault "/home/${config.standard.owner}/Golem";

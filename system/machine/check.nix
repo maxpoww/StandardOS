@@ -133,22 +133,22 @@ let
         && !(lib.any (p: (p.name or "") == "golem-bless") c.environment.systemPackages)))
     (ex "the first-boot build is this layout's own: only where the installer asked for it, and it is the update's --converge"
       (c.systemd.services.golem-first-boot.unitConfig.ConditionPathExists == "/var/lib/golem/first-boot.pending"
-        && lib.hasInfix "golem-update --converge" c.systemd.services.golem-first-boot.script
+        && lib.hasInfix "update --converge" c.systemd.services.golem-first-boot.script
         && !(lib.hasInfix "golem-seal" c.systemd.services.golem-first-boot.script)
         && q.systemd.services ? golem-first-boot))
     (ex "the dock's installs are this layout's own: the owner's list is watched, and what it becomes is machine/apps.list (the base alone has no dock)"
       (c.systemd.paths.waverunner-apply.pathConfig.PathChanged == "/home/ana/.config/waverunner/packages.list"
         && c.systemd.services.waverunner-apply.restartIfChanged == false
         && !(q.systemd.services ? waverunner-apply)))
-    (ex "the nightly update is this layout's own, under the names the desktop knows: it runs golem-update, and nothing of the seal"
+    (ex "the nightly update is this layout's own, under the names the desktop knows: it runs update, and nothing of the seal"
       (c.systemd.timers ? golem-autoupdate && c.systemd.services ? golem-update-now
-        && lib.hasInfix "golem-update --nightly" c.systemd.services.golem-autoupdate.script
+        && lib.hasInfix "update --nightly" c.systemd.services.golem-autoupdate.script
         && !(lib.hasInfix "golem-seal" c.systemd.services.golem-autoupdate.script)
         && !(lib.hasInfix "git -C" c.systemd.services.golem-autoupdate.script)
         && q.systemd.timers ? golem-autoupdate))
-    (ex "the commands of this layout are there: rebuild-golem, golem-update, golem-recover, golem-status, golem-machine-checkout"
+    (ex "the commands of this layout are there: rebuild, update, recover, status, golem-machine-checkout"
       (lib.all (n: lib.any (p: (p.name or "") == n) c.environment.systemPackages)
-        [ "rebuild-golem" "golem-update" "golem-recover" "golem-status" "golem-machine-checkout" ]))
+        [ "rebuild" "update" "recover" "status" "golem-machine-checkout" ]))
   ];
 
   failed = builtins.filter (e: !e.ok) checks;

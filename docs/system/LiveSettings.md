@@ -135,7 +135,7 @@ of its own. Where each choice lives:
 | Sound output, Volume, Microphone | `wpctl` | PipeWire / WirePlumber |
 | Wi-Fi, Bluetooth | `nmcli radio`, `bluetoothctl power` | their services |
 | Power mode | `powerprofilesctl` | its daemon |
-| Brightness | `golem-brightness` | the backlight |
+| Brightness | `brightness` | the backlight |
 | Default apps | `xdg-mime default` | the owner's `~/.config/mimeapps.list` (Standard's table sits below it, in `~/.local/share/applications`) |
 | Notifications | the dock's do-not-disturb | the dock |
 | Updates, About Standard, Battery, Privacy | read-only, with "More…" into the gear box | — |

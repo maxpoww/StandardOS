@@ -2,7 +2,7 @@
 # minimal base to the Standard desktop, added BY REBUILD, never by reinstall
 # (Installer/installing/spec.md, the stage ladder). Attached via the
 # `standard-desktop` flake attr (base composition + this bundle); a machine climbs
-# by setting standard.flakeAttr = "standard-desktop" and running rebuild-golem — the
+# by setting standard.flakeAttr = "standard-desktop" and running rebuild — the
 # existing self-rebuild loop (base/loop.nix, base/selfrebuild.nix), no new
 # mechanism.
 #
@@ -73,7 +73,7 @@
   standard.appsFile = "hosts/target/apps.nix";
 
   # A machine running the desktop REBUILDS ITSELF AS the desktop. Every
-  # self-rebuild (first-boot, autoupdate, rebuild-golem, waverunner-apply)
+  # self-rebuild (first-boot, autoupdate, rebuild, waverunner-apply)
   # targets standard.flakeAttr, and base/loop.nix defaults it to standard-minimal.
   # Left there, a desktop machine rebuilt itself WITHOUT the desktop: on the
   # thinkpad (2026-09-29) a drag-install of Brave switched live to stage 0,

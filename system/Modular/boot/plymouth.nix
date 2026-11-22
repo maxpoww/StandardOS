@@ -20,12 +20,13 @@
 let
   # The theme: a script module drawing the bar. Two 1px colour tiles the script
   # scales — accent (xterm-256 #180, the surface's one accent) and a dim track.
-  golemPlymouth = pkgs.runCommand "golem-plymouth-theme"
+  # (Named golem until 2026-11-22; the bar itself is the same.)
+  standardPlymouth = pkgs.runCommand "standard-plymouth-theme"
     { nativeBuildInputs = [ pkgs.imagemagick ]; }
     ''
-      d=$out/share/plymouth/themes/golem
+      d=$out/share/plymouth/themes/standard
       mkdir -p "$d"
-      cp ${./golem-plymouth/golem.script} "$d/golem.script"
+      cp ${./golem-plymouth/golem.script} "$d/standard.script"
       # The accent is NOT xterm #180's true #d7af87 — the console renders fg 180
       # as the VGA fallback #AA5500 (sampled off the installer bar, srgb 170,85,0),
       # and THAT orange is the bar Max sees. Plymouth draws true colour, so we
@@ -37,20 +38,20 @@ let
       {
         echo "[Plymouth Theme]"
         echo "Name=Standard"
-        echo "Description=Golem boot bar"
+        echo "Description=StandardOS boot bar"
         echo "ModuleName=script"
         echo ""
         echo "[script]"
         echo "ImageDir=$d"
-        echo "ScriptFile=$d/golem.script"
-      } > "$d/golem.plymouth"
+        echo "ScriptFile=$d/standard.script"
+      } > "$d/standard.plymouth"
     '';
 in
 {
   boot.plymouth = {
     enable = true;
-    themePackages = [ golemPlymouth ];
-    theme = "golem";
+    themePackages = [ standardPlymouth ];
+    theme = "standard";
   };
 
   # Plymouth needs `splash` (and only splash — never fbcon=map:1, see the #65

@@ -22,7 +22,7 @@ in
 
   # The installed-machine shape (what the S9 installer will seed on real
   # hardware): a writable flake checkout, so OPTIONS installs
-  # (waverunner-apply) and rebuild-golem work inside the VM. The VM
+  # (waverunner-apply) and rebuild work inside the VM. The VM
   # rebuilds itself as standard-vm — switching to #golem's nvidia config
   # in here would be nonsense.
   standard.flakeDir = "${ownerHome}/Golem";

@@ -66,7 +66,7 @@ in
   # Waverunner config
   xdg.configFile."waverunner/config.toml".text = ''
     [theme]
-    icon_theme = "Golem"
+    icon_theme = "Standard"
   ''
   # Weak GPU (standard.desktop.effects = "light"): the compositor does not blur
   # what is behind the shell, so the dock's glass (the dock, the apps card,

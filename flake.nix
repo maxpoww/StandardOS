@@ -280,7 +280,7 @@
       # manually and it should work out of the box on the last Standard version").
       # Before, the ISO baked the stage-0 minimal: an install booted to a text
       # login and stayed there until someone set standard.flakeAttr and ran
-      # rebuild-golem — the lab laptops only had desktops because they were
+      # rebuild — the lab laptops only had desktops because they were
       # moved onto #standard-desktop by hand. Now gen-1 IS the desktop (Hyprland,
       # the dock + OPTIONS, Seam, the apps, ups…), installed by direct copy,
       # offline, nothing compiled on the machine. first-boot then converges it
@@ -308,7 +308,7 @@
           # boots, so it is a system of the layout the installer lays down —
           # no checkout in a home, the layout's own update, dock installs and
           # first-boot step. What it keeps as "the folder I was built from"
-          # is Standard as the medium carries it: what golem-recover puts back
+          # is Standard as the medium carries it: what recover puts back
           # in /etc/nixos/standard when a machine goes back to this system.
           ++ machine.layoutModules (if bakeDesktop then "desktop" else "minimal")
           ++ [
@@ -505,7 +505,7 @@
         # leaves land. A rule change in Modular/choose.nix that moves a
         # machine's list fails here.
         # Going back a version keeps what belongs to the machine, not to a
-        # version (lab.nix): golem-recover's own helper, run on made-up trees.
+        # version (lab.nix): recover's own helper, run on made-up trees.
         recover-standing = nixpkgs.legacyPackages.${system}.runCommand "golem-recover-standing"
           { nativeBuildInputs = [ nixpkgs.legacyPackages.${system}.git ]; } ''
           export HOME=$TMPDIR
@@ -731,7 +731,7 @@
         standard-vm = nixpkgs.lib.nixosSystem {
           inherit system;
           # The VM seeds its own flake checkout from the image (hosts/vm.nix)
-          # so the installed-machine loop — waverunner-apply, rebuild-golem —
+          # so the installed-machine loop — waverunner-apply, rebuild —
           # works there like it will on an ISO-installed Standard.
           specialArgs = { standardSrc = self; };
           modules = standardModules ++ [ ./hosts/vm.nix ];
@@ -766,7 +766,7 @@
           # (hosts/target exactly as this build saw it: staged, not in git
           # history) at /etc/golem/machine. With the generation's git revision
           # (system.configurationRevision) it names the whole source of the
-          # system, so golem-recover can always rebuild what runs (Max,
+          # system, so recover can always rebuild what runs (Max,
           # 2026-10-03: "how do we recovery the system so it really comes back
           # and rebuild?"). No secrets: the password lives outside the flake.
           machineLayer = {
@@ -824,7 +824,7 @@
 
           # STAGE 1 — the same machine PLUS the desktop bundle (spec.md's stage
           # ladder). A stage-0 install climbs by setting standard.flakeAttr =
-          # "standard-desktop" in its machine.nix and running rebuild-golem: same
+          # "standard-desktop" in its machine.nix and running rebuild: same
           # seed, same hardware leaves, + desktop/*. No reinstall, no new
           # mechanism — the existing self-rebuild loop (base/loop, base/selfrebuild).
           standard-desktop = nixpkgs.lib.nixosSystem {

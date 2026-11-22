@@ -136,7 +136,7 @@ No compositor is needed for the first two.
   own; never the live one): start it with `-c <a copy of this folder>/hyprland.lua`,
   a `machine.lua` in its `standard/`, `XDG_CONFIG_HOME` and `XDG_STATE_HOME` at
   scratch folders, and a `PATH` that begins with a folder of do-nothing
-  stand-ins for `golem-lock-screen`, `awww-daemon`, `bluetoothctl`, `hyprctl`
+  stand-ins for `lock`, `awww-daemon`, `bluetoothctl`, `hyprctl`
   and `waverunner-ctl`: the autostart must not lock, start a wallpaper daemon,
   touch the real Bluetooth adapter or load the plugin from a test. Then
   `hyprctl configerrors` (nothing), `hyprctl -j binds` (96), `hyprctl reload`

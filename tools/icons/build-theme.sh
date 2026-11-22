@@ -7,10 +7,12 @@
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 ROOT=${1:-$HERE/../../system/home/icons}
-# Two tones (Max, 2026-10-14): Golem (silver) for the light look, Golem-Dark
-# (graphite) for the dark one; Standard's dark mode switches between them.
+# Two tones (Max, 2026-10-14): Standard (silver) for the light look,
+# Standard-Dark (graphite) for the dark one; the dark mode switches between
+# them. (Golem and Golem-Dark until 2026-11-22: home/look.nix keeps those
+# names as links, for an older dock and the settings that name them.)
 for tone in light dark; do
-  if [ $tone = light ]; then name=Golem; inherits=Papirus,hicolor; else name=Golem-Dark; inherits=Papirus-Dark,hicolor; fi
+  if [ $tone = light ]; then name=Standard; inherits=Papirus,hicolor; else name=Standard-Dark; inherits=Papirus-Dark,hicolor; fi
   DEST=$ROOT/$name
   rm -rf "$DEST"; mkdir -p "$DEST"
   for size in scalable 24 16; do
@@ -18,7 +20,7 @@ for tone in light dark; do
     GOLEM_ICON_TONE=$tone GOLEM_ICON_SIZE=$size GOLEM_ICON_OUT="$DEST/$dir" python3 "$HERE/make.py" >/dev/null
     GOLEM_ICON_TONE=$tone GOLEM_ICON_SIZE=$size GOLEM_ICON_OUT="$DEST/$dir" python3 "$HERE/files.py" >/dev/null
   done
-  # Golem Files' own icon, in the tone (graphite in the dark, as the dock draws it).
+  # The file manager's own icon, in the tone (graphite in the dark, as the dock draws it).
   GOLEM_ICON_TONE=$tone GOLEM_ICON_OUT="$DEST/scalable" python3 "$HERE/app.py"
   # Seam's compass, in the tone of the theme (the dock swings its needle).
   GOLEM_ICON_TONE=$tone GOLEM_ICON_OUT="$DEST/scalable" python3 "$HERE/seam.py"

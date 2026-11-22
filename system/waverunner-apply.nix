@@ -175,7 +175,7 @@ let
       #    own code (a pull nobody re-blessed), golem-seal-heal re-blesses it.
       #    When the owner has edits not yet approved, the install builds the
       #    last approved state (+ this list): the app installs, and the edit
-      #    waits for its owner's rebuild-golem.
+      #    waits for its owner's rebuild.
       #    Either way the build reads root's own copy (golem-seal-copy, step
       #    3), never the checkout: a file swapped in after this check is not
       #    what gets built (2026-11-12).
@@ -184,7 +184,7 @@ let
           echo "$healmsg" >&2
         elif [[ -d ${lib.escapeShellArg config.standard.seal.snapshot} ]]; then
           echo "$healmsg" >&2
-          echo "waverunner-apply: building from the last approved state; the local edits above wait for: rebuild-golem" >&2
+          echo "waverunner-apply: building from the last approved state; the local edits above wait for: rebuild" >&2
         else
           errjson=$(printf '%s\n%s' "$sealmsg" "$healmsg" | tail -c 2000 | jq -Rs .)
           write_status "done" false "$errjson"

@@ -5,7 +5,7 @@
 # owner, and anything you want different. Golem never rewrites this file, and
 # an update never touches it.
 #
-#   sudo nixos-rebuild switch     apply what you changed (or: rebuild-golem)
+#   sudo nixos-rebuild switch     apply what you changed (or: rebuild)
 #   ./modules/                    drop a .nix file there: it is part of the system
 #   ./standard/                   the system itself, yours to read and edit (docs: ./standard/docs)
 #   man configuration.nix         every NixOS option

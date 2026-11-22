@@ -1,4 +1,4 @@
-# base/recover — golem-recover: make the source match a system that works.
+# base/recover — recover: make the source match a system that works.
 #
 # NixOS can BOOT a previous generation, but the source (~/Golem) stays where
 # it was; if the declaration is what broke, the machine can never rebuild
@@ -8,7 +8,7 @@
 #
 # Every generation now names its whole source: its git revision
 # (system.configurationRevision) and the machine layer it was built from
-# (/etc/golem/machine, flake.nix). `golem-recover [system]` puts the source
+# (/etc/golem/machine, flake.nix). `recover [system]` puts the source
 # back to exactly that — default: the running system:
 #   1. the owner's edits to Standard's own files are kept in
 #      ~/Golem-local-edits/<when>/ (never lost);
@@ -20,7 +20,7 @@
 #   4. the tree is sealed again.
 # Afterwards a rebuild reproduces the system. Used by the crash rollback
 # (desktop/crash-recovery.nix), by a failed update (base/autoupdate.nix), and
-# by hand: `sudo golem-recover`.
+# by hand: `sudo recover`.
 { config, lib, pkgs, ... }:
 
 let
@@ -28,7 +28,7 @@ let
   dir = toString config.standard.flakeDir;
   home = config.users.users.${owner}.home;
   recover = pkgs.writeShellApplication {
-    name = "golem-recover";
+    name = "recover";
     runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.git pkgs.util-linux pkgs.diffutils pkgs.gnugrep ];
     text = builtins.readFile ./recover-standing.sh + ''
       sys=$(readlink -f "''${1:-/run/current-system}")
@@ -45,11 +45,11 @@ let
       rev=''${rev%-dirty}
       snap="$sys/etc/golem/machine"
       if ! [[ "$rev" =~ ^[0-9a-f]{40}$ ]]; then
-        echo "golem-recover: $sys does not name its revision — cannot recover from it" >&2
+        echo "recover: $sys does not name its revision — cannot recover from it" >&2
         exit 1
       fi
       if [ ! -d "$dir/.git" ]; then
-        echo "golem-recover: $dir is not a checkout yet (golem-seed-adopt makes it one)" >&2
+        echo "recover: $dir is not a checkout yet (golem-seed-adopt makes it one)" >&2
         exit 1
       fi
       cd "$dir"
@@ -58,7 +58,7 @@ let
         asowner git fetch --quiet || true
       fi
       if ! asowner git cat-file -e "$rev^{commit}" 2>/dev/null; then
-        echo "golem-recover: revision $rev is not in the checkout's history" >&2
+        echo "recover: revision $rev is not in the checkout's history" >&2
         exit 1
       fi
 
@@ -79,7 +79,7 @@ let
           asowner mkdir -p "$keep/hosts"
           asowner cp -a hosts/target "$keep/hosts/"
         fi
-        echo "golem-recover: the current edits are kept in $keep"
+        echo "recover: the current edits are kept in $keep"
       fi
 
       # 2. the code: exactly the system's revision. `reset --hard` DELETES
@@ -92,7 +92,7 @@ let
 
       # 3. the machine layer: the system's own copy (or, from a generation
       #    built before it kept one, the files that were there), staged
-      src="$snap"; [ -d "$src" ] || { src="$held"; echo "golem-recover: $(basename "$sys") keeps no machine layer (built before 2026-10-03) — keeping the current one" >&2; }
+      src="$snap"; [ -d "$src" ] || { src="$held"; echo "recover: $(basename "$sys") keeps no machine layer (built before 2026-10-03) — keeping the current one" >&2; }
       # -L: /etc/golem/machine is a symlink into the store, and find does not
       # follow a symlinked starting point by itself (it copied NOTHING once,
       # and reset had already removed the machine files — MacBook, 2026-10-03)
@@ -102,14 +102,14 @@ let
         if [ "$b" = default.nix ]; then continue; fi
         # (a file the owner cannot read or write is left out; the check
         #  below puts the whole layer back if an essential one is missing)
-        asowner install -m 0644 "$f" "hosts/target/$b" || { echo "golem-recover: could not put back hosts/target/$b" >&2; continue; }
+        asowner install -m 0644 "$f" "hosts/target/$b" || { echo "recover: could not put back hosts/target/$b" >&2; continue; }
         asowner git add -f "hosts/target/$b"
       done
       # Never leave a machine without its machine layer: if the essential
       # files did not come back, put back what was there and say so.
       for need in machine.nix hardware-configuration.nix; do
         if [ ! -f "hosts/target/$need" ]; then
-          echo "golem-recover: hosts/target/$need did not come back — restoring the machine layer as it was" >&2
+          echo "recover: hosts/target/$need did not come back — restoring the machine layer as it was" >&2
           asowner cp -a "$held/." hosts/target/
           { asowner find hosts/target -maxdepth 1 -type f ! -name default.nix -print0 2>/dev/null || true; } \
             | while IFS= read -r -d "" f; do asowner git add -f "$f"; done
@@ -135,10 +135,10 @@ let
          || GOLEM_SEAL_TRUSTED_MACHINE="$trusted" ${config.standard.seal.heal}/bin/golem-seal-heal; then
         :
       else
-        echo "golem-recover: the source is reset but not sealed (not upstream's, or offline); the next update checks it again" >&2
+        echo "recover: the source is reset but not sealed (not upstream's, or offline); the next update checks it again" >&2
       fi
       rm -rf "$trusted"
-      echo "golem-recover: the source now matches $(basename "$sys") (revision ''${rev:0:8}) — a rebuild reproduces it"
+      echo "recover: the source now matches $(basename "$sys") (revision ''${rev:0:8}) — a rebuild reproduces it"
     '';
   };
   # golem-git-heal: what a power cut can do to the owner's checkout, undone.
@@ -151,7 +151,7 @@ let
   #     fetched again from the upstream; if the repository is still broken,
   #     its .git is set aside and golem-seed-adopt makes a fresh checkout,
   #     carrying this machine's own files over.
-  # Run first by the nightly update, dock installs and golem-recover.
+  # Run first by the nightly update, dock installs and recover.
   heal = pkgs.writeShellApplication {
     name = "golem-git-heal";
     runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.procps pkgs.gawk pkgs.gnused pkgs.git pkgs.util-linux ];
@@ -242,9 +242,9 @@ in
     type = lib.types.package;
     internal = true;
     default = recover;
-    description = "golem-recover: put the source back to what built a given system.";
+    description = "recover: put the source back to what built a given system.";
   };
   config = lib.mkIf (config.standard.flakeDir != null) {
-    environment.systemPackages = [ recover heal ];
+    environment.systemPackages = [ (lib.hiPrio recover) heal ];
   };
 }

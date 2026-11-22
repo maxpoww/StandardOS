@@ -1,4 +1,4 @@
-"""golem-printer-ink <hp device uri>: the ink an HP printer tells, a line
+"""printer-ink <hp device uri>: the ink an HP printer tells, a line
 each: <kind> TAB <percent left>. The kind is HPLIP's agent type: 1 black,
 2 tri-colour, 3 photo, 4 cyan, 5 magenta, 6 yellow (base/codes.py has
 the rest).
@@ -32,7 +32,7 @@ try:
     finally:
         d.close()
 except Exception as e:  # HPLIP raises its own Error, and anything below it
-    print("golem-printer-ink: %s" % (e,), file=sys.stderr)
+    print("printer-ink: %s" % (e,), file=sys.stderr)
     sys.exit(2)
 
 for i in range(1, 32):

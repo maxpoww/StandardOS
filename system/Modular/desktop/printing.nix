@@ -103,7 +103,7 @@ let
   # for the Printers page: HPLIP's own device code, without the tray icon and
   # the update check its hp-levels starts (printer-ink.py).
   printerInk = pkgs.writeShellApplication {
-    name = "golem-printer-ink";
+    name = "printer-ink";
     text = ''
       export GOLEM_HPLIP=${pkgs.hplip} GOLEM_SITE=${pkgs.python3.sitePackages}
       exec ${pkgs.python3}/bin/python3 -I ${./printer-ink.py} "$@"
@@ -137,7 +137,7 @@ let
 in
 {
   config = lib.mkIf (!config.standard.lean) {
-    environment.systemPackages = [ printerInk ];
+    environment.systemPackages = [ (lib.hiPrio printerInk) ];
 
     services.printing = {
       enable = true;

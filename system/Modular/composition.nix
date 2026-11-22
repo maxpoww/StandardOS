@@ -41,7 +41,7 @@
     # beside selfrebuild/loop — they share standard.flakeDir and the seal.
     ./base/first-boot.nix
     ./base/quiet-login.nix
-    ./base/recover.nix      # golem-recover: the source back to what built a working system
+    ./base/recover.nix      # recover: the source back to what built a working system
     ./base/freeze.nix       # a frozen machine reboots itself (kernel.panic, softlockup_panic)
     ./base/autoupdate.nix
     ./base/seed.nix         # the seed's upstream + golem-seed-adopt (P10)

@@ -28,7 +28,7 @@ change when it updates: it merges the new version into the files as you left
 them. Only where you and the new version changed the same lines does the new
 version win, and then your file is set aside, not lost
 (`/var/lib/golem/local-edits/`).
-`sudo golem-status` lists what this computer changed.
+`sudo status` lists what this computer changed.
 
 Or leave Standard's file alone and carry a whole version of your own here:
 

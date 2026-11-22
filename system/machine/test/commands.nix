@@ -3,7 +3,7 @@
 # the folder it was given holds (/var/lib/golem-test), and answers with the
 # code a test left in /run/stub-rc (after the seconds a test left in
 # /run/stub-sleep). Everything else is the real thing: the
-# checkout maker, golem-update, golem-recover, golem-status, the wave.
+# checkout maker, update, recover, status, the wave.
 { machine }:
 
 let
@@ -27,7 +27,7 @@ let
   };
   inherit (s) pkgs;
   desktop = (machine ../fixtures/thinkpad).system;
-  names = [ "rebuild-golem" "golem-update" "golem-recover" "golem-status" "golem-machine-checkout" ];
+  names = [ "rebuild" "update" "recover" "status" "golem-machine-checkout" ];
 in
 pkgs.buildEnv {
   name = "golem-layout-commands";

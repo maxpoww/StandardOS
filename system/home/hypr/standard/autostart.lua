@@ -2,8 +2,8 @@ local M = require("standard.lib").machine
 
 ---- AUTOSTART ----
 hl.on("hyprland.start", function()
--- The lock screen first: it is the login (home/idle.nix, golem-lock-screen).
-hl.exec_cmd("golem-lock-screen --login")
+-- The lock screen first: it is the login (home/idle.nix, lock).
+hl.exec_cmd("lock --login")
 -- The overview plugin: an install loads the one this system was built with,
 -- the dev box its live build (machine.plugin).
 if M.plugin then

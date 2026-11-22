@@ -71,7 +71,7 @@ end
 
 local start = index_of(lines, "-- hyprland.start")
 check("the lock screen is the first thing the session starts (it is the login)",
-    start and lines[start + 1] == 'exec_cmd("golem-lock-screen --login")', start and lines[start + 1])
+    start and lines[start + 1] == 'exec_cmd("lock --login")', start and lines[start + 1])
 if not facts.dev then
     local leaked
     for _, line in ipairs(lines) do
@@ -79,7 +79,7 @@ if not facts.dev then
     end
     check("an install runs nothing from /home/max", leaked == nil, leaked)
     check("an install calls the dock's tool from PATH",
-        index_of(lines, [[dsp.exec_cmd("sh -c 'waverunner-ctl capture press || golem-screenshot screen'")]]) ~= nil)
+        index_of(lines, [[dsp.exec_cmd("sh -c 'waverunner-ctl capture press || screenshot screen'")]]) ~= nil)
     check("an install does not start the dock from here (it is a systemd unit)", index_of(lines, "waverunner-dev") == nil)
 end
 if facts.plugin then

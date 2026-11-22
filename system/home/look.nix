@@ -7,12 +7,19 @@
 let
   # Standard's own icons (tools/icons writes them): folders, files, devices in
   # the dock's cast metal, in two tones — Standard (silver, the light look) and
-  # Golem-Dark (graphite, the dark one); the dock's Dark mode switches the
+  # Standard-Dark (graphite, the dark one); the dock's Dark mode switches the
   # apps and itself between them. Every other name falls through to Papirus.
-  golemIcons = pkgs.runCommand "golem-icon-theme" { } ''
+  #
+  # Golem and Golem-Dark are what they were called until 2026-11-22: kept as
+  # links to the same folders, because an older dock asks for them by that
+  # name (it writes them into the apps' settings), and so do the settings it
+  # already wrote.
+  standardIcons = pkgs.runCommand "standard-icon-theme" { } ''
     mkdir -p $out/share/icons
-    cp -r --no-preserve=mode ${./icons/Golem} $out/share/icons/Golem
-    cp -r --no-preserve=mode ${./icons/Golem-Dark} $out/share/icons/Golem-Dark
+    cp -r --no-preserve=mode ${./icons/Standard} $out/share/icons/Standard
+    cp -r --no-preserve=mode ${./icons/Standard-Dark} $out/share/icons/Standard-Dark
+    ln -s Standard $out/share/icons/Golem
+    ln -s Standard-Dark $out/share/icons/Golem-Dark
   '';
 in
 {
@@ -24,7 +31,7 @@ in
   #             ~/.local/state/golem/theme, and these configs import it
   #   dark    → the palette's dark variant; the dock flips the look live
   #   fonts   → the ones configuration.nix already ships and defaults to
-  #   icons   → Golem-Dark (system/home/icons, built by tools/icons): Golem's
+  #   icons   → Standard-Dark (system/home/icons, built by tools/icons): Standard's
   #             own folders, files and devices, inheriting Papirus-Dark for the
   #             rest; Standard in the light look. waverunner's config.toml names
   #             "Standard" and the dock picks the tone itself
@@ -40,8 +47,8 @@ in
     };
     iconTheme = {
       # Standard ships dark; the dock writes the light one when that is chosen.
-      name = "Golem-Dark";
-      package = golemIcons;
+      name = "Standard-Dark";
+      package = standardIcons;
     };
     # No prefer-dark-theme: the look is the dock's to set, live — GTK 3 wears
     # the palette's theme over adw-gtk3 or adw-gtk3-dark by look (waverunner

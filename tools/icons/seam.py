@@ -6,7 +6,7 @@ shaded one, the long four out to the plate's edge), and a needle on Safari's
 45° slant, its north half red, its south half blue. The dock draws the same
 figure itself (waverunner compass_icon.rs), swings the needle on hover (the
 plate the other way) and turns it round on a click; this is the icon
-everything else shows. Silver, or graphite for Golem-Dark (GOLEM_ICON_TONE).
+everything else shows. Silver, or graphite for Standard-Dark (GOLEM_ICON_TONE).
 build-theme.sh runs it. (It must not import make.py: that import writes.)"""
 import math
 import os
