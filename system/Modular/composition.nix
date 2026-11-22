@@ -21,6 +21,8 @@
     ./base/locale.nix
     ./base/console.nix
     ./base/user-dirs.nix
+    # The manual, offline (docs/manual): `manual`, Controls → Documentation.
+    ./base/manual.nix
     # The boot bar (Max, 2026-09-23: "show our bar everywhere") — Plymouth
     # styled as the OPTIONS status bar, so every installed Standard fills its boot
     # screen with the accent bar instead of black. Loader-agnostic (it is the
